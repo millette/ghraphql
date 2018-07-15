@@ -8,6 +8,7 @@ const meow = require('meow')
 
 // self
 const graphqlGot = require('.')
+const { name } = require('./package.json')
 
 const run = async cli => {
   try {
@@ -43,20 +44,18 @@ run(
   meow(
     `
   Usage
-    $ cli <location> [<location> ...]
+    $ ${name} <location> [<location> ...]
 
   Options
     --pretty,  -p   Pretty output
-
     --verbose, -v   Verbose mode
-
     --query,   -q   Query to run
 
   Examples
-    $ cli Montréal
+    $ ghraphql Montréal
     // searches for montreal and montréal
 
-    $ cli Montréal "saint jean"
+    $ ghraphql Montréal "saint jean"
     // searches for montreal, montréal and "saint jean"
 `,
     {

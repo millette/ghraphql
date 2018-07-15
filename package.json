@@ -1,6 +1,6 @@
 {
-  "name": "graphql-got",
-  "description": "Search github for users by location.",
+  "name": "ghraphql",
+  "description": "Search GitHub for users by location.",
   "version": "0.0.0",
   "main": "index.js",
   "bin": "cli.js",
