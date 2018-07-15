@@ -5,6 +5,7 @@ const { readFileSync } = require('fs')
 
 // npm
 const got = require('got')
+const deburr = require('lodash.deburr')
 
 // self
 const { name, version } = require('./package.json')
@@ -19,10 +20,25 @@ const gotOpts = {
 
 const query = readFileSync('query.graphql', 'utf-8')
 
+const makeSearch = where => {
+  if (typeof where === 'string') {
+    where = [where]
+  }
+  const g = []
+  where.forEach(x => {
+    const flat = deburr(x)
+    if (flat !== x) {
+      g.push(`location:${JSON.stringify(flat)}`)
+    }
+    g.push(`location:${JSON.stringify(x)}`)
+  })
+  return `${g.join(' ')} sort:joined`
+}
+
 const graphqlGot = where =>
   got('https://api.github.com/graphql', {
     ...gotOpts,
-    body: { query, variables: { loc: `location:${where} sort:joined` } }
+    body: { query, variables: { loc: makeSearch(where) } }
   }).then(({ body: { data, errors } }) => {
     if (errors) {
       const err = new Error(`GraphQL: ${errors[0].message}`)
