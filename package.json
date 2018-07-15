@@ -4,9 +4,17 @@
   "version": "0.1.1",
   "main": "index.js",
   "bin": "cli.js",
+  "license": "AGPL-3.0",
+  "repository": "millette/ghraphql",
+  "author": {
+    "name": "Robin Millette",
+    "email": "robin@millette.info",
+    "url": "http://robin.millette.info"
+  },
   "engines": {
     "node": ">= 8.11.3"
   },
+  "keywords": ["github", "graphql", "users", "location", "cli"],
   "license": "AGPL-3.0",
   "lint-staged": {
     "*.{js,json,md,graphql}": ["prettier-standard", "git add"]
