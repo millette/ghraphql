@@ -4,22 +4,22 @@
 
 // core
 const { readFileSync } = require('fs')
-const { join } = require('path')
 
 // npm
 const meow = require('meow')
 const marked = require('marked')
 const TerminalRenderer = require('marked-terminal')
 
+// self
+const graphqlGot = require('.')
+const { localFile, deburred } = require('.')
+const { name } = require('./package.json')
+
 marked.setOptions({
   renderer: new TerminalRenderer()
 })
 
-const readme = marked(readFileSync(join(__dirname, 'README.md'), 'utf-8'))
-
-// self
-const graphqlGot = require('.')
-const { name } = require('./package.json')
+const readme = marked(localFile('README.md'))
 
 const run = async cli => {
   try {

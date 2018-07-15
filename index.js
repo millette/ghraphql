@@ -22,6 +22,8 @@ const GOT_OPTS = {
 
 const WHERE_ERROR = '"where" argument should be a string or an array.'
 
+const localFile = path => readFileSync(join(__dirname, path), 'utf-8')
+
 const deburred = where => {
   if (!process.env.GITHUB_TOKEN) {
     throw new Error('Missing: GITHUB_TOKEN environment variable. See README.')
@@ -50,7 +52,7 @@ const makeSearch = where =>
     .map(x => `location:${JSON.stringify(x)}`)
     .join(' ')} sort:joined`
 
-const defaultQuery = readFileSync(join(__dirname, 'query.graphql'), 'utf-8')
+const defaultQuery = localFile('query.graphql')
 
 const graphqlGot = async (where, query) => {
   try {
@@ -84,5 +86,5 @@ const graphqlGot = async (where, query) => {
 }
 
 module.exports = graphqlGot
-
 module.exports.deburred = deburred
+module.exports.localFile = localFile
