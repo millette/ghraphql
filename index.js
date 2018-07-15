@@ -23,6 +23,10 @@ const GOT_OPTS = {
 const WHERE_ERROR = '"where" argument should be a string or an array.'
 
 const deburred = where => {
+  if (!process.env.GITHUB_TOKEN) {
+    throw new Error('Missing: GITHUB_TOKEN environment variable. See README.')
+  }
+
   if (typeof where === 'string') {
     where = [where]
   } else if (!Array.isArray(where) || !where.length) {
