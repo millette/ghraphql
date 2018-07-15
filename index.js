@@ -6,6 +6,7 @@ const { readFileSync } = require('fs')
 // npm
 const got = require('got')
 const deburr = require('lodash.deburr')
+const uniq = require('lodash.uniq')
 
 // self
 const { name, version } = require('./package.json')
@@ -20,18 +21,17 @@ const gotOpts = {
 
 const query = readFileSync('query.graphql', 'utf-8')
 
+const deburred = where => {
+  const g = []
+  where.map(x => x.trim().toLowerCase()).forEach(x => g.push(x, deburr(x)))
+  return uniq(g)
+}
+
 const makeSearch = where => {
   if (typeof where === 'string') {
     where = [where]
   }
-  const g = []
-  where.forEach(x => {
-    const flat = deburr(x)
-    if (flat !== x) {
-      g.push(`location:${JSON.stringify(flat)}`)
-    }
-    g.push(`location:${JSON.stringify(x)}`)
-  })
+  const g = deburred(where).map(x => `location:${JSON.stringify(x)}`)
   return `${g.join(' ')} sort:joined`
 }
 
@@ -52,3 +52,5 @@ const graphqlGot = where =>
   })
 
 module.exports = graphqlGot
+
+module.exports.deburred = deburred
