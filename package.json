@@ -16,6 +16,8 @@
     "got": "^8.3.2",
     "lodash.deburr": "^4.1.0",
     "lodash.uniq": "^4.5.0",
+    "marked": "^0.4.0",
+    "marked-terminal": "^3.0.0",
     "meow": "^5.0.0"
   },
   "devDependencies": {

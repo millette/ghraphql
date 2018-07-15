@@ -4,9 +4,18 @@
 
 // core
 const { readFileSync } = require('fs')
+const { join } = require('path')
 
 // npm
 const meow = require('meow')
+const marked = require('marked')
+const TerminalRenderer = require('marked-terminal')
+
+marked.setOptions({
+  renderer: new TerminalRenderer()
+})
+
+const readme = marked(readFileSync(join(__dirname, 'README.md'), 'utf-8'))
 
 // self
 const graphqlGot = require('.')
@@ -14,6 +23,9 @@ const { name } = require('./package.json')
 
 const run = async cli => {
   try {
+    if (cli.flags.readme) {
+      return console.log(readme)
+    }
     if (!cli.input.length) {
       throw new Error(`
   Missing required location argument.
@@ -49,6 +61,7 @@ run(
     $ ${name} <location> [<location> ...]
 
   Options
+    --readme   -r   Show readme
     --pretty,  -p   Pretty output
     --verbose, -v   Verbose mode
     --query,   -q   Query to run
@@ -65,6 +78,10 @@ run(
         query: {
           type: 'string',
           alias: 'q'
+        },
+        readme: {
+          type: 'boolean',
+          alias: 'r'
         },
         help: {
           type: 'boolean',

@@ -31,6 +31,7 @@ $ ghraphql <location> [<location> ...]
 ## Options
 
 ```
+--readme   -r   Show readme
 --pretty,  -p   Pretty output
 --verbose, -v   Verbose mode
 --query,   -q   Query to run
