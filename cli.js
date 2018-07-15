@@ -13,6 +13,13 @@ const cli = meow(
 
   Options
     --pretty, -p  Pretty output
+
+  Examples
+    $ cli Montréal
+    // searches for montreal and montréal
+
+    $ cli Montréal "saint jean"
+    // searches for montreal, montréal and "saint jean"
 `,
   {
     flags: {
@@ -38,7 +45,7 @@ if (cli.input.length) {
       if (cli.flags.verbose) {
         console.error('Results found:', body.search.edges.length)
       }
-      console.log(JSON.stringify(body, null, '  '))
+      console.log(JSON.stringify(body, null, cli.flags.pretty ? '  ' : ''))
     })
     .catch(console.error)
 } else {

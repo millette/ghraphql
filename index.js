@@ -30,16 +30,25 @@ const deburred = where => {
 const makeSearch = where => {
   if (typeof where === 'string') {
     where = [where]
+  } else if (!Array.isArray(where)) {
+    throw new Error('"where" argument should be a string or an array.')
   }
+
   const g = deburred(where).map(x => `location:${JSON.stringify(x)}`)
   return `${g.join(' ')} sort:joined`
 }
 
-const graphqlGot = where =>
-  got('https://api.github.com/graphql', {
-    ...gotOpts,
-    body: { query, variables: { loc: makeSearch(where) } }
-  }).then(({ body: { data, errors } }) => {
+const graphqlGot = async where => {
+  try {
+    const loc = makeSearch(where)
+    const { body: { data, errors } } = await got(
+      'https://api.github.com/graphql',
+      {
+        ...gotOpts,
+        body: { query, variables: { loc } }
+      }
+    )
+
     if (errors) {
       const err = new Error(`GraphQL: ${errors[0].message}`)
       err.errors = JSON.stringify(errors)
@@ -49,7 +58,10 @@ const graphqlGot = where =>
       throw err
     }
     return data
-  })
+  } catch (e) {
+    throw e
+  }
+}
 
 module.exports = graphqlGot
 
