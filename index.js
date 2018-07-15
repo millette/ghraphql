@@ -17,23 +17,22 @@ const gotOpts = {
   }
 }
 
-const graphqlGot = (query, variables) =>
+const query = readFileSync('query.graphql', 'utf-8')
+
+const graphqlGot = where =>
   got('https://api.github.com/graphql', {
     ...gotOpts,
-    body: { query, variables }
+    body: { query, variables: { loc: `location:${where} sort:joined` } }
   }).then(({ body: { data, errors } }) => {
     if (errors) {
-      const err = new Error(errors[0].message)
+      const err = new Error(`GraphQL: ${errors[0].message}`)
       err.errors = JSON.stringify(errors)
+      if (data) {
+        err.data = JSON.stringify(data)
+      }
       throw err
     }
     return data
   })
 
-const where = 'kinshasa'
-const query = readFileSync('query.graphql', 'utf-8')
-const loc = `location:${where} sort:joined`
-
-graphqlGot(query, { loc })
-  .then(body => console.log(JSON.stringify(body, null, '  ')))
-  .catch(console.error)
+module.exports = graphqlGot
