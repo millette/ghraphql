@@ -10,7 +10,17 @@ $ npm install -g ghraphql
 
 This will install the `ghraphql` command line client globally.
 
-You'll need a GitHub account and a token (you can generate here). Set it in your environment variables with the name `GITHUB_TOKEN`.
+You'll need a GitHub account and a token. GitHub provides some [help on personal access token creation](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/).
+
+You can [generate a new token](https://github.com/settings/tokens) and set it in your environment variables with the name `GITHUB_TOKEN` to configure `ghraphql`.
+
+If your token is "The-Token", you can try the following:
+
+```
+$ GITHUB_TOKEN=The-Token ghraphql Montréal
+```
+
+Better to set it up properly in your `.bashrc` file or equivalent.
 
 ## Usage
 
