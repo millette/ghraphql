@@ -1,0 +1,66 @@
+query {
+  rateLimit {
+    cost
+    limit
+    nodeCount
+    remaining
+    resetAt
+  }
+  search(first: 5, type: USER, query: "location:lubumbashi sort:joined") {
+    userCount
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+    edges {
+      node {
+        ... on User {
+          name
+          login
+          databaseId
+          location
+          createdAt
+          isHireable
+          websiteUrl
+          starredRepositories(last: 2, ownedByViewer: false) {
+
+            edges {
+              starredAt
+              node {
+                nameWithOwner
+                primaryLanguage {
+                  name
+                }
+              }
+            }
+          }
+          repositoriesContributedTo(last: 2, includeUserRepositories: true) {
+            totalCount
+            edges {
+              node {
+                forkCount
+                stargazers(last: 50) {
+                  totalCount
+                  edges {
+                    starredAt
+                    node {
+                      login
+                      location
+                      createdAt
+                    }
+                  }
+                }
+                primaryLanguage {
+                  name
+                }
+                nameWithOwner
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

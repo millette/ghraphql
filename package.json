@@ -1,0 +1,21 @@
+{
+  "name": "graphql-got",
+  "version": "0.0.0",
+  "main": "index.js",
+  "license": "AGPL-3.0",
+  "lint-staged": {
+    "*.{js,json,md}": ["prettier-standard", "git add"]
+  },
+  "scripts": {
+    "format": "prettier-standard '**/*.+(js|json|md)'",
+    "precommit": "lint-staged"
+  },
+  "dependencies": {
+    "got": "^8.3.2"
+  },
+  "devDependencies": {
+    "husky": "^0.14.3",
+    "lint-staged": "^7.2.0",
+    "prettier-standard": "^8.0.1"
+  }
+}
