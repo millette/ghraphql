@@ -77,8 +77,8 @@ $ ghraphql Montréal "saint jean"
 
 ## Coming features
 
-* Paging (over 100 results)
-* Respect quotas (5000 query limit per hours and points)
+* Paging (over 100 results while respectings quotas [issues#1](https://github.com/millette/ghraphql/issues/1)
+* Determine all required fields [issues#2](https://github.com/millette/ghraphql/issues/2)
 
 ## GraphQL
 
