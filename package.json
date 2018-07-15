@@ -6,10 +6,10 @@
   "bin": "cli.js",
   "license": "AGPL-3.0",
   "lint-staged": {
-    "*.{js,json,md}": ["prettier-standard", "git add"]
+    "*.{js,json,md,graphql}": ["prettier-standard", "git add"]
   },
   "scripts": {
-    "format": "prettier-standard '**/*.+(js|json|md)'",
+    "format": "prettier-standard '**/*.+(js|json|md|graphql)'",
     "precommit": "lint-staged"
   },
   "dependencies": {

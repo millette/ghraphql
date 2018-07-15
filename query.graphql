@@ -25,7 +25,6 @@ query ElUsers($loc: String!) {
           isHireable
           websiteUrl
           starredRepositories(last: 2, ownedByViewer: false) {
-
             edges {
               starredAt
               node {
