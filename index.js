@@ -58,6 +58,9 @@ const graphqlGot = async (where, query) => {
       }
       throw err
     }
+    if (!data.search.edges.length) {
+      throw new Error('No results found.')
+    }
     return data
   } catch (e) {
     throw e
