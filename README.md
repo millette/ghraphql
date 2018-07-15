@@ -2,6 +2,20 @@
 
 Search GitHub for users by location.
 
+# TOC
+
+* [Requirements](#requirements)
+  * [GNU/Linux / Unix-like OS](#gnulinux--unix-like-os)
+  * [Node.js](#node-js)
+  * [GitHub account and token](#github-account-and-token)
+* [Install](#install)
+* [Usage](#usage)
+* [Options](#options)
+* [Examples](#examples)
+* [Features](#features)
+* [Coming features](#coming-features)
+* [GraphQL](#graphql)
+
 ## Requirements
 
 ### GNU/Linux / Unix-like OS
@@ -77,6 +91,7 @@ $ ghraphql Montréal "saint jean"
 
 ## Coming features
 
+* [All the issues](https://github.com/millette/ghraphql/issues)
 * Paging (over 100 results while respectings quotas [issues#1](https://github.com/millette/ghraphql/issues/1)
 * Determine all required fields [issues#2](https://github.com/millette/ghraphql/issues/2)
 
