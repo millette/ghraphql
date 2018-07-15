@@ -11,7 +11,7 @@ const uniq = require('lodash.uniq')
 // self
 const { name, version } = require('./package.json')
 
-const gotOpts = {
+const GOT_OPTS = {
   json: true,
   headers: {
     authorization: `bearer ${process.env.GITHUB_TOKEN}`,
@@ -19,33 +19,44 @@ const gotOpts = {
   }
 }
 
-const deburred = where => {
-  const g = []
-  where.map(x => x.trim().toLowerCase()).forEach(x => g.push(x, deburr(x)))
-  return uniq(g)
-}
+const WHERE_ERROR = '"where" argument should be a string or an array.'
 
-const makeSearch = where => {
+const deburred = where => {
   if (typeof where === 'string') {
     where = [where]
-  } else if (!Array.isArray(where)) {
-    throw new Error('"where" argument should be a string or an array.')
+  } else if (!Array.isArray(where) || !where.length) {
+    throw new Error(WHERE_ERROR)
   }
 
-  const g = deburred(where).map(x => `location:${JSON.stringify(x)}`)
-  return `${g.join(' ')} sort:joined`
+  const withDeburred = []
+  where
+    .map(x => x.trim().toLowerCase())
+    .forEach(x => withDeburred.push(x, deburr(x)))
+  const result = uniq(withDeburred).filter(Boolean)
+
+  if (result.length) {
+    return result
+  }
+  throw new Error(WHERE_ERROR)
 }
+
+const makeSearch = where =>
+  `${deburred(where)
+    .map(x => `location:${JSON.stringify(x)}`)
+    .join(' ')} sort:joined`
+
+const defaultQuery = readFileSync('query.graphql', 'utf-8')
 
 const graphqlGot = async (where, query) => {
   try {
     if (!query) {
-      query = readFileSync('query.graphql', 'utf-8')
+      query = defaultQuery
     }
     const loc = makeSearch(where)
     const { body: { data, errors } } = await got(
       'https://api.github.com/graphql',
       {
-        ...gotOpts,
+        ...GOT_OPTS,
         body: { query, variables: { loc } }
       }
     )
