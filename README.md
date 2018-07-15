@@ -2,13 +2,27 @@
 
 Search GitHub for users by location.
 
-## Install
+## Requirements
+
+### GNU/Linux / Unix-like OS
+
+This might work on MacOS and Microsoft Windows but I haven't tested it. Let me know!
+
+### Node.js
+
+You'll need Node.js. The quickest way to install it for your local user in the [n-install bash script](https://github.com/mklement0/n-install).
+
+`git` and `curl` are required for `n-install`.
 
 ```
-$ npm install -g ghraphql
+$ curl -L https://git.io/n-install | bash
 ```
 
-This will install the `ghraphql` command line client globally.
+This will install the latest LTS, which is 8.11.3 at the time of this writing.
+
+You should restart your shell before using `node` and `npm` but first, setup your GitHub token so you only have to restart once.
+
+### GitHub account and token
 
 You'll need a GitHub account and a token. GitHub provides some [help on personal access token creation](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/).
 
@@ -20,7 +34,15 @@ If your token is "The-Token", you can try the following:
 $ GITHUB_TOKEN=The-Token ghraphql Montréal
 ```
 
-Better to set it up properly in your `.bashrc` file or equivalent.
+Better to set it up properly in your `.bashrc` file or equivalent. You should now restart your shell for the changes to take effect.
+
+## Install
+
+```
+$ npm install -g ghraphql
+```
+
+This will install the `ghraphql` command line client globally.
 
 ## Usage
 
