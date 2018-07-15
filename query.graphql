@@ -1,4 +1,4 @@
-query {
+query ElUsers($loc: String!) {
   rateLimit {
     cost
     limit
@@ -6,7 +6,7 @@ query {
     remaining
     resetAt
   }
-  search(first: 5, type: USER, query: "location:lubumbashi sort:joined") {
+  search(first: 5, type: USER, query: $loc) {
     userCount
     pageInfo {
       endCursor

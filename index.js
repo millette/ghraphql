@@ -9,20 +9,6 @@ const got = require('got')
 // self
 const { name, version } = require('./package.json')
 
-/*
-const z2 = { _: 1 }
-const emptyFalsy = (z) => !(z && Object.keys(typeof z === 'object' ? z : z2).length)
-
-const slim = (object) => transform(object, (result, value, key) => {
-  if (Array.isArray(value) || isObject(value)) { value = slim(value) }
-  if (emptyFalsy(value)) { return }
-  if (Array.isArray(result)) { return result.push(value) }
-  result[key] = value
-})
-*/
-
-const slim = o => o
-
 const gotOpts = {
   json: true,
   headers: {
@@ -31,14 +17,23 @@ const gotOpts = {
   }
 }
 
-// body is an object with required query and optional variables
-const graphqlGot = body =>
-  got('https://api.github.com/graphql', { ...gotOpts, body }).then(({ body }) =>
-    slim(body)
-  )
+const graphqlGot = (query, variables) =>
+  got('https://api.github.com/graphql', {
+    ...gotOpts,
+    body: { query, variables }
+  }).then(({ body: { data, errors } }) => {
+    if (errors) {
+      const err = new Error(errors[0].message)
+      err.errors = JSON.stringify(errors)
+      throw err
+    }
+    return data
+  })
 
+const where = 'kinshasa'
 const query = readFileSync('query.graphql', 'utf-8')
+const loc = `location:${where} sort:joined`
 
-graphqlGot({ query })
+graphqlGot(query, { loc })
   .then(body => console.log(JSON.stringify(body, null, '  ')))
   .catch(console.error)
