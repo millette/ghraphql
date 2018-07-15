@@ -52,28 +52,26 @@ const cli = meow(
 )
 
 const run = async cli => {
-  if (cli.input.length) {
-    try {
-      if (cli.flags.verbose) {
-        const locations = graphqlGot.deburred(cli.input)
-        console.error('Locations:', locations)
-      }
-      const query = readFileSync(`${cli.flags.query}.graphql`, 'utf-8')
-      const body = await graphqlGot(cli.input, query)
-      if (cli.flags.verbose) {
-        console.error('Results found:', body.search.edges.length)
-      }
-      console.log(JSON.stringify(body, null, cli.flags.pretty ? '  ' : ''))
-    } catch (e) {
-      throw e
-    }
-  } else {
-    console.error(`Missing required argument: location.
+  try {
+    if (!cli.input.length) {
+      throw new Error(`Missing required argument: location.
 Prefer "montréal" over "montreal"
 and use quotes to handle spaces in locations.
-${cli.help}
-`)
+${cli.help}`)
+    }
+    if (cli.flags.verbose) {
+      const locations = graphqlGot.deburred(cli.input)
+      console.error('Locations:', locations)
+    }
+    const query = readFileSync(`${cli.flags.query}.graphql`, 'utf-8')
+    const body = await graphqlGot(cli.input, query)
+    if (cli.flags.verbose) {
+      console.error('Results found:', body.search.edges.length)
+    }
+    console.log(JSON.stringify(body, null, cli.flags.pretty ? '  ' : ''))
+  } catch (e) {
+    console.error(e.errors ? e : e.toString())
   }
 }
 
-run(cli).catch(console.error)
+run(cli)
