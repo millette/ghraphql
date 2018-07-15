@@ -1,5 +1,8 @@
 'use strict'
 
+// core
+const { readFileSync } = require('fs')
+
 // npm
 const meow = require('meow')
 
@@ -40,7 +43,9 @@ if (cli.input.length) {
     const locations = graphqlGot.deburred(cli.input)
     console.error('Locations:', locations)
   }
-  graphqlGot(cli.input)
+  const query = readFileSync('query.graphql', 'utf-8')
+
+  graphqlGot(cli.input, query)
     .then(body => {
       if (cli.flags.verbose) {
         console.error('Results found:', body.search.edges.length)

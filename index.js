@@ -19,8 +19,6 @@ const gotOpts = {
   }
 }
 
-const query = readFileSync('query.graphql', 'utf-8')
-
 const deburred = where => {
   const g = []
   where.map(x => x.trim().toLowerCase()).forEach(x => g.push(x, deburr(x)))
@@ -38,8 +36,11 @@ const makeSearch = where => {
   return `${g.join(' ')} sort:joined`
 }
 
-const graphqlGot = async where => {
+const graphqlGot = async (where, query) => {
   try {
+    if (!query) {
+      query = readFileSync('query.graphql', 'utf-8')
+    }
     const loc = makeSearch(where)
     const { body: { data, errors } } = await got(
       'https://api.github.com/graphql',
