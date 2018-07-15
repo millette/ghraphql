@@ -22,5 +22,8 @@
     "husky": "^0.14.3",
     "lint-staged": "^7.2.0",
     "prettier-standard": "^8.0.1"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   }
 }

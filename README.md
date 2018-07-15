@@ -2,6 +2,14 @@
 
 Search GitHub for users by location.
 
+## Install
+
+```
+$ npm install -g ghraphql
+```
+
+This will install the `ghraphql` command line client globally.
+
 ## Usage
 
 ```
