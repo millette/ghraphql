@@ -8,52 +8,56 @@ const marked = require('marked')
 // self
 const { localFile } = require('..')
 
-const makeAnchor = x =>
-  x
+// seems to work like GitHub
+const makeAnchor = heading =>
+  heading
     .toLowerCase()
     .replace(/[^\/\w]+/g, '-')
     .replace(/\//g, '')
 
 const readme = localFile('README.md')
 
-const doit = () => {
-  const tokens = marked.lexer(readme)
-
-  const headings = tokens
-    .filter(x => x.type === 'heading' && x.depth > 1 && x.depth < 4)
-    .map((x, i) => ({
-      ...x,
-      i,
-      anchor: makeAnchor(x.text)
-    }))
-
-  return headings.filter(x => x.depth === 2).map(x => {
-    let last = x.i + 1
+const tree = headings =>
+  headings.filter(h2 => h2.depth === 2).map(h2 => {
+    let last = h2.i + 1
     const children = headings
       .slice(last)
-      .filter(y => y.depth === 3)
-      .filter(y => {
-        if (last === y.i) {
+      .filter(h3 => h3.depth === 3)
+      .filter(h3 => {
+        if (last === h3.i) {
           ++last
           return true
         }
+        // If we skip an index, we can ignore the rest
         last = headings.length
         return false
       })
     if (children.length) {
-      return { ...x, children }
+      return { ...h2, children }
     }
-    return x
+    return h2
   })
-}
 
-const dotoo = tops => {
+// Output markdown list (and sublists)
+const markdownList = () => {
   const lines = ['\n# TOC\n']
-  tops.forEach(x => {
-    lines.push(`* [${x.text}](#${x.anchor})`)
-    if (x.children && x.children.length) {
-      x.children.forEach(y => {
-        lines.push(`  * [${y.text}](#${y.anchor})`)
+  tree(
+    marked
+      .lexer(readme)
+      .filter(
+        heading =>
+          heading.type === 'heading' && heading.depth > 1 && heading.depth < 4
+      )
+      .map((heading, i) => ({
+        ...heading,
+        i,
+        anchor: makeAnchor(heading.text)
+      }))
+  ).forEach(h2 => {
+    lines.push(`* [${h2.text}](#${h2.anchor})`)
+    if (h2.children && h2.children.length) {
+      h2.children.forEach(h3 => {
+        lines.push(`  * [${h3.text}](#${h3.anchor})`)
       })
     }
   })
@@ -61,33 +65,24 @@ const dotoo = tops => {
   return lines.join('\n')
 }
 
+// Return updated readme or nothing if no TOC found
 const findToc = () => {
-  const x = readme.match(/\n# TOC\n\n([^]*?)\n##/)
-  if (!x || !x[1]) {
-    return
-  }
-  return {
-    mode: x[1][0] === '*' ? 'update' : 'insert',
-    index: x.index,
-    x0: x[0].slice(0, -2),
-    x1: x[1]
-  }
+  const match = readme.match(/\n# TOC\n\n([^]*?)\n##/)
+  return (
+    match &&
+    match[1] &&
+    readme
+      .replace(
+        match[1][0] === '*' ? match[0].slice(0, -2) : '\n# TOC\n\n',
+        markdownList()
+      )
+      .trim()
+  )
 }
 
-const woot = toc => {
-  // move all this into findToc()?
-  if (!toc) {
-    return
-  }
-  const it = dotoo(doit())
-  const result =
-    toc.mode === 'insert'
-      ? readme.replace('\n# TOC\n\n', it)
-      : readme.replace(toc.x0, it)
-  // actually write new readme file
-  return result.trim()
+const updatedReadme = findToc()
+
+if (updatedReadme) {
+  // FIXME: actually write new readme file
+  console.log(updatedReadme)
 }
-
-const zam = woot(findToc())
-
-console.log(zam)
