@@ -6,7 +6,7 @@ query ElUsers($loc: String!) {
     remaining
     resetAt
   }
-  search(first: 5, type: USER, query: $loc) {
+  search(first: 100, type: USER, query: $loc) {
     userCount
     pageInfo {
       endCursor
