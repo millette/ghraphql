@@ -4,6 +4,7 @@
 
 // core
 const { readFileSync } = require('fs')
+const { basename } = require('path')
 
 // npm
 const meow = require('meow')
@@ -43,7 +44,11 @@ const run = async cli => {
     }
     const body = await graphqlGot(
       cli.input,
-      cli.flags.query && readFileSync(`${cli.flags.query}.graphql`, 'utf-8')
+      cli.flags.query &&
+        readFileSync(
+          `${basename(cli.flags.query, '.graphql')}.graphql`,
+          'utf-8'
+        )
     )
     if (cli.flags.verbose) {
       console.error('Results found:', body.search.edges.length)
