@@ -1,4 +1,4 @@
-query ElUsers($loc: String!) {
+query ElUsers($loc: String!, $after: String) {
   rateLimit {
     cost
     limit
@@ -6,7 +6,7 @@ query ElUsers($loc: String!) {
     remaining
     resetAt
   }
-  search(first: 100, type: USER, query: $loc) {
+  search(after: $after, first: 100, type: USER, query: $loc) {
     userCount
     pageInfo {
       endCursor
