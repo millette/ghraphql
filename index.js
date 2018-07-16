@@ -54,17 +54,22 @@ const makeSearch = where =>
 
 const defaultQuery = localFile('query.graphql')
 
-const graphqlGot = async (where, query) => {
+const graphqlGotImp = async (where, query, after) => {
   try {
     if (!query) {
       query = defaultQuery
     }
     const loc = makeSearch(where)
+    const variables = { loc }
+    if (after) {
+      variables.after = after
+    }
+
     const { body: { data, errors } } = await got(
       'https://api.github.com/graphql',
       {
         ...GOT_OPTS,
-        body: { query, variables: { loc } }
+        body: { query, variables }
       }
     )
 
@@ -76,13 +81,38 @@ const graphqlGot = async (where, query) => {
       }
       throw err
     }
-    if (!data.search.edges.length) {
-      throw new Error('No results found.')
+    if (!data || !data.search) {
+      throw new Error('No data or data.search found.')
     }
+
+    if (!data.search.edges || !data.search.edges.length) {
+      data.search.edges = []
+      return data
+    }
+
     return data
   } catch (e) {
     throw e
   }
+}
+
+const graphqlGot = async (where, query) => {
+  let result = []
+  let data
+  try {
+    let after = false
+    do {
+      data = await graphqlGotImp(where, query, after)
+      result = result.concat(data.search.edges)
+      after = data.search.pageInfo.hasNextPage && data.search.pageInfo.endCursor
+    } while (after)
+  } catch (e) {
+    throw e
+  }
+  if (result.length) {
+    data.search.edges = result
+  }
+  return data
 }
 
 module.exports = graphqlGot
