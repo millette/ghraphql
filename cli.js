@@ -34,6 +34,13 @@ const run = async cli => {
   and use quotes to handle spaces in locations.
   ${cli.help}`)
     }
+
+    const variables = {
+      lastStarred: parseInt(cli.flags.lastStarred, 10),
+      lastRepos: parseInt(cli.flags.lastRepos, 10),
+      lastStargazers: parseInt(cli.flags.lastStargazers, 10)
+    }
+
     if (cli.flags.verbose) {
       const locations = graphqlGot.deburred(cli.input)
       if (locations.length > 1) {
@@ -48,7 +55,8 @@ const run = async cli => {
         readFileSync(
           `${basename(cli.flags.query, '.graphql')}.graphql`,
           'utf-8'
-        )
+        ),
+      variables
     )
     if (cli.flags.verbose) {
       console.error('Results found:', body.search.edges.length)
@@ -66,10 +74,13 @@ run(
     $ ${name} <location> [<location> ...]
 
   Options
-    --readme   -r   Show readme
-    --pretty,  -p   Pretty output
-    --verbose, -v   Verbose mode
-    --query,   -q   Query to run
+    --readme                Show readme
+    --pretty            -p  Pretty output
+    --verbose           -v  Verbose mode
+    --query             -q  Query to run
+    --last-starred      -s  Include these last starred repositories (50)
+    --last-repos        -r  Include these last repositories contributed to (50)
+    --last-stargazers   -g  Include these last stargazers (50)
 
   Examples
     $ ghraphql Montréal
@@ -80,13 +91,24 @@ run(
 `,
     {
       flags: {
+        'last-starred': {
+          type: 'string',
+          alias: 's'
+        },
+        'last-repos': {
+          type: 'string',
+          alias: 'r'
+        },
+        'last-stargazers': {
+          type: 'string',
+          alias: 'g'
+        },
         query: {
           type: 'string',
           alias: 'q'
         },
         readme: {
-          type: 'boolean',
-          alias: 'r'
+          type: 'boolean'
         },
         help: {
           type: 'boolean',

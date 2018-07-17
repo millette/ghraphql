@@ -1,4 +1,10 @@
-query ElUsers($loc: String!, $after: String) {
+query ElUsers(
+  $loc: String!
+  $lastStargazers: Int!
+  $lastStarred: Int!
+  $lastRepos: Int!
+  $after: String
+) {
   rateLimit {
     cost
     limit
@@ -6,7 +12,7 @@ query ElUsers($loc: String!, $after: String) {
     remaining
     resetAt
   }
-  search(after: $after, first: 100, type: USER, query: $loc) {
+  search(after: $after, first: 25, type: USER, query: $loc) {
     userCount
     pageInfo {
       endCursor
@@ -24,7 +30,7 @@ query ElUsers($loc: String!, $after: String) {
           createdAt
           isHireable
           websiteUrl
-          starredRepositories(last: 2, ownedByViewer: false) {
+          starredRepositories(last: $lastStarred, ownedByViewer: false) {
             edges {
               starredAt
               node {
@@ -35,12 +41,15 @@ query ElUsers($loc: String!, $after: String) {
               }
             }
           }
-          repositoriesContributedTo(last: 2, includeUserRepositories: true) {
+          repositoriesContributedTo(
+            last: $lastRepos
+            includeUserRepositories: true
+          ) {
             totalCount
             edges {
               node {
                 forkCount
-                stargazers(last: 50) {
+                stargazers(last: $lastStargazers) {
                   totalCount
                   edges {
                     starredAt

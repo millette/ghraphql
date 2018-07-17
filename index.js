@@ -54,15 +54,28 @@ const makeSearch = where =>
 
 const defaultQuery = localFile('query.graphql')
 
-const graphqlGotImp = async (where, query, after) => {
+const graphqlGotImp = async (where, query, variables = {}) => {
   try {
+    variables.loc = makeSearch(where)
+
+    if (!variables.lastStargazers) {
+      variables.lastStargazers = 50
+    }
+
+    if (!variables.lastStarred) {
+      variables.lastStarred = 50
+    }
+
+    if (!variables.lastRepos) {
+      variables.lastRepos = 50
+    }
+
+    if (!variables.after) {
+      delete variables.after
+    }
+
     if (!query) {
       query = defaultQuery
-    }
-    const loc = makeSearch(where)
-    const variables = { loc }
-    if (after) {
-      variables.after = after
     }
 
     const { body: { data, errors } } = await got(
@@ -96,13 +109,13 @@ const graphqlGotImp = async (where, query, after) => {
   }
 }
 
-const graphqlGot = async (where, query) => {
+const graphqlGot = async (where, query, variables = {}) => {
   let result = []
   let data
   try {
     let after = false
     do {
-      data = await graphqlGotImp(where, query, after)
+      data = await graphqlGotImp(where, query, { ...variables, after })
       result = result.concat(data.search.edges)
       after = data.search.pageInfo.hasNextPage && data.search.pageInfo.endCursor
     } while (after)

@@ -67,10 +67,13 @@ $ ghraphql <location> [<location> ...]
 ## Options
 
 ```
---readme   -r   Show readme
---pretty,  -p   Pretty output
---verbose, -v   Verbose mode
---query,   -q   Query to run
+--readme                Show readme
+--pretty            -p  Pretty output
+--verbose           -v  Verbose mode
+--query             -q  Query to run
+--last-starred      -s  Include these last starred repositories (50)
+--last-repos        -r  Include these last repositories contributed to (50)
+--last-stargazers   -g  Include these last stargazers (50)
 ```
 
 ## Examples
