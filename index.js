@@ -18,11 +18,13 @@ const debug = require('debug')(name)
 // const ProgressBar = require('progress')
 
 const GOT_OPTS = {
+  /*
   retry: {
     retries: 10,
     methods: ['POST'],
     statusCodes: [403, 408, 413, 429, 502, 503, 504]
   },
+*/
   json: true,
   headers: {
     authorization: `bearer ${process.env.GITHUB_TOKEN}`,
@@ -70,11 +72,20 @@ const gotRetry = (query, variables) => {
       ...GOT_OPTS,
       body: { query, variables }
     })
+      .then(ret => {
+        debug(ret.headers)
+        debug(Object.keys(ret.body))
+        return ret
+      })
+      .catch(error => {
+        debug(error)
+        throw error
+      })
 
   return pRetry(gotRun, {
     retries: 15,
     onFailedAttempt: error => {
-      debug(error)
+      debug(error.toString())
       debug(
         `Attempt ${error.attemptNumber} failed. There are ${
           error.attemptsLeft
@@ -152,32 +163,65 @@ const graphqlGotImp = async (where, query, variables = {}) => {
 
 const throttle = async (then, userCount, nPerQuery, rateLimit) => {
   const now = Date.now()
+  const { remaining } = rateLimit || 5000
   const elapsed = now - then
   debug('elapsed, rateLimit:', elapsed, rateLimit)
-  let ms = Math.round(
+  const ttt = Math.round(
     (Date.parse(rateLimit.resetAt) - now) /
-      Math.round(rateLimit.remaining / rateLimit.cost) -
-      Math.round(elapsed)
+      Math.round(remaining / rateLimit.cost)
   )
-  const nQueries = Math.round(userCount / nPerQuery)
-  const timeNeeded = Math.round(nQueries * ms)
-  const timeUntilReset = Date.parse(rateLimit.resetAt) - now
 
+  const nQueries = Math.round(userCount / nPerQuery)
+  const timeNeeded = Math.round(nQueries * ttt)
+  const timeUntilReset = Date.parse(rateLimit.resetAt) - now
   const costNeeded = rateLimit.cost * nQueries
+
+  let ms
+
+  if (rateLimit.cost > remaining) {
+    ms = timeUntilReset + 1000
+  } else if (timeNeeded > timeUntilReset && costNeeded > remaining) {
+    ms = Math.max(500, Math.round(0.75 * (ttt - Math.round(elapsed))))
+    /*
+      Math.round(0.75 * (
+        (Date.parse(rateLimit.resetAt) - now) /
+          Math.round(remaining / rateLimit.cost) -
+          Math.round(elapsed)
+      ))
+    )
+    */
+  } else {
+    ms = 500
+  }
+
+  /*
+  // let ms = Math.max(
+  const ms = (rateLimit.cost > rateLimit.remaining) ? (timeUntilReset + 1000) : Math.max(
+    500,
+    Math.round(0.75 * (
+      (Date.parse(rateLimit.resetAt) - now) /
+        Math.round(rateLimit.remaining / rateLimit.cost) -
+        Math.round(elapsed)
+    ))
+  )
+  */
 
   debug('nQueries:', nQueries)
   debug('timeNeeded:', timeNeeded)
   debug('timeUntilReset:', timeUntilReset)
   debug('costNeeded:', costNeeded)
-  debug('remaining:', rateLimit.remaining)
+  debug('ms:', ms)
 
+  await delay(ms)
+
+  /*
   if (rateLimit.cost > rateLimit.remaining) {
-    ms = timeUntilReset + 4500
+    ms = timeUntilReset + 1000
   }
 
   // if (ms > 200 && ((timeNeeded > timeUntilReset) || (costNeeded > rateLimit.remaining))) {
   if (
-    ms > 5000 &&
+    // ms > 6500 &&
     timeNeeded > timeUntilReset &&
     costNeeded > rateLimit.remaining
   ) {
@@ -186,6 +230,7 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
   } else {
     debug('no wait')
   }
+  */
   if (process.env.DEBUG === name) {
     console.error()
   }

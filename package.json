@@ -20,8 +20,8 @@
   },
   "scripts": {
     "lint": "standard",
-    "format": "standard && prettier-standard '**/*.+(js|json|md|graphql)'",
-    "precommit": "standard && lint-staged"
+    "format": "prettier-standard '**/*.+(js|json|md|graphql)'",
+    "precommit": "lint-staged"
   },
   "dependencies": {
     "debug": "^3.1.0",
