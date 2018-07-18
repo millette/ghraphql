@@ -4,15 +4,25 @@
 const { readFileSync } = require('fs')
 const { join } = require('path')
 
-// npm
-const got = require('got')
-const deburr = require('lodash.deburr')
-const uniq = require('lodash.uniq')
-
 // self
 const { name, version } = require('./package.json')
 
+// npm
+const got = require('got')
+const pRetry = require('p-retry')
+const deburr = require('lodash.deburr')
+const uniq = require('lodash.uniq')
+const uniqBy = require('lodash.uniqby')
+const delay = require('delay')
+const debug = require('debug')(name)
+// const ProgressBar = require('progress')
+
 const GOT_OPTS = {
+  retry: {
+    retries: 10,
+    methods: ['POST'],
+    statusCodes: [403, 408, 413, 429, 502, 503, 504]
+  },
   json: true,
   headers: {
     authorization: `bearer ${process.env.GITHUB_TOKEN}`,
@@ -47,16 +57,46 @@ const deburred = where => {
   throw new Error(WHERE_ERROR)
 }
 
-const makeSearch = where =>
-  `${deburred(where)
+const makeSearch = (where, created) => {
+  if (!created) {
+    created = new Date()
+  }
+  created = created.toISOString().slice(0, 10)
+  return `${deburred(where)
     .map(x => `location:${JSON.stringify(x)}`)
-    .join(' ')} sort:joined`
+    .join(' ')} type:user sort:joined created:<=${created}`
+}
 
 const defaultQuery = localFile('query.graphql')
 
+const gotRetry = (query, variables) => {
+  const gotRun = () =>
+    got('https://api.github.com/graphql', {
+      ...GOT_OPTS,
+      body: { query, variables }
+    })
+
+  return pRetry(gotRun, {
+    retries: 10,
+    onFailedAttempt: error => {
+      debug(
+        `Attempt ${error.attemptNumber} failed. There are ${
+          error.attemptsLeft
+        } attempts left.`
+      )
+    }
+  })
+}
+
 const graphqlGotImp = async (where, query, variables = {}) => {
   try {
-    variables.loc = makeSearch(where)
+    let created
+    if (variables.created) {
+      created = variables.created
+    }
+    delete variables.created
+
+    variables.loc = makeSearch(where, created)
 
     if (!variables.lastStargazers) {
       variables.lastStargazers = 50
@@ -78,6 +118,10 @@ const graphqlGotImp = async (where, query, variables = {}) => {
       query = defaultQuery
     }
 
+    debug('variables:', variables)
+
+    const { body: { data, errors } } = await gotRetry(query, variables)
+    /*
     const { body: { data, errors } } = await got(
       'https://api.github.com/graphql',
       {
@@ -85,6 +129,7 @@ const graphqlGotImp = async (where, query, variables = {}) => {
         body: { query, variables }
       }
     )
+    */
 
     if (errors) {
       const err = new Error(`GraphQL: ${errors[0].message}`)
@@ -109,16 +154,80 @@ const graphqlGotImp = async (where, query, variables = {}) => {
   }
 }
 
+const throttle = async (then, userCount, nPerQuery, rateLimit) => {
+  const now = Date.now()
+  const elapsed = now - then
+  debug('elapsed, rateLimit:', elapsed, rateLimit)
+  let ms = Math.round(
+    (Date.parse(rateLimit.resetAt) - now) /
+      Math.round(rateLimit.remaining / rateLimit.cost) -
+      Math.round(elapsed)
+  )
+  const nQueries = Math.round(userCount / nPerQuery)
+  const timeNeeded = Math.round(nQueries * ms)
+  const timeUntilReset = Date.parse(rateLimit.resetAt) - now
+
+  const costNeeded = rateLimit.cost * nQueries
+
+  debug('nQueries:', nQueries)
+  debug('timeNeeded:', timeNeeded)
+  debug('timeUntilReset:', timeUntilReset)
+  debug('costNeeded:', costNeeded)
+  debug('remaining:', rateLimit.remaining)
+
+  if (rateLimit.cost > rateLimit.remaining) {
+    ms = timeUntilReset + 1500
+  }
+
+  // if (ms > 200 && ((timeNeeded > timeUntilReset) || (costNeeded > rateLimit.remaining))) {
+  if (
+    ms > 1000 &&
+    timeNeeded > timeUntilReset &&
+    costNeeded > rateLimit.remaining
+  ) {
+    debug('ms:', ms)
+    await delay(ms)
+  }
+  if (process.env.DEBUG === name) {
+    console.error()
+  }
+}
+
 const graphqlGot = async (where, query, variables = {}) => {
   let result = []
   let data
   try {
     let after = false
+    let created
+    let userCount
     do {
-      data = await graphqlGotImp(where, query, { ...variables, after })
-      result = result.concat(data.search.edges)
+      const then = Date.now()
+      data = await graphqlGotImp(where, query, { ...variables, after, created })
+      result = uniqBy(
+        result.concat(data.search.edges),
+        'node.databaseId'
+        // ({ node }) => node.databaseId
+      )
+      if (!userCount) {
+        userCount = data.search.userCount
+      }
+      debug('result.length, userCount:', result.length, userCount)
       after = data.search.pageInfo.hasNextPage && data.search.pageInfo.endCursor
-    } while (after)
+      if (after) {
+        await throttle(
+          then,
+          userCount - result.length,
+          data.search.edges.length,
+          data.rateLimit
+        )
+      } else {
+        created =
+          result.length < userCount &&
+          new Date(
+            data.search.edges[data.search.edges.length - 1].node.createdAt
+          )
+      }
+    } while (after || created)
   } catch (e) {
     throw e
   }
