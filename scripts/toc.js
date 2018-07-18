@@ -12,7 +12,7 @@ const { localFile } = require('..')
 const makeAnchor = heading =>
   heading
     .toLowerCase()
-    .replace(/[^\/\w]+/g, '-')
+    .replace(/[^/\w]+/g, '-')
     .replace(/\//g, '')
 
 const readme = localFile('README.md')
