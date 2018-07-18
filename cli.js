@@ -42,7 +42,7 @@ const run = async cli => {
     }
 
     if (cli.flags.verbose) {
-      const locations = graphqlGot.deburred(cli.input)
+      const locations = deburred(cli.input)
       if (locations.length > 1) {
         console.error('Locations:', locations)
       } else {
