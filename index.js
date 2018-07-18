@@ -172,17 +172,19 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
   debug('remaining:', rateLimit.remaining)
 
   if (rateLimit.cost > rateLimit.remaining) {
-    ms = timeUntilReset + 1500
+    ms = timeUntilReset + 4500
   }
 
   // if (ms > 200 && ((timeNeeded > timeUntilReset) || (costNeeded > rateLimit.remaining))) {
   if (
-    ms > 1000 &&
+    ms > 5000 &&
     timeNeeded > timeUntilReset &&
     costNeeded > rateLimit.remaining
   ) {
     debug('ms:', ms)
     await delay(ms)
+  } else {
+    debug('no wait')
   }
   if (process.env.DEBUG === name) {
     console.error()
