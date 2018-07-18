@@ -57,15 +57,10 @@ const deburred = where => {
   throw new Error(WHERE_ERROR)
 }
 
-const makeSearch = (where, created) => {
-  if (!created) {
-    created = new Date()
-  }
-  created = created.toISOString().slice(0, 10)
-  return `${deburred(where)
+const makeSearch = (where, created) =>
+  `${deburred(where)
     .map(x => `location:${JSON.stringify(x)}`)
-    .join(' ')} type:user sort:joined created:<=${created}`
-}
+    .join(' ')} type:user sort:joined${created ? ` created:<=${created}` : ''}`
 
 const defaultQuery = localFile('query.graphql')
 
@@ -77,8 +72,9 @@ const gotRetry = (query, variables) => {
     })
 
   return pRetry(gotRun, {
-    retries: 10,
+    retries: 15,
     onFailedAttempt: error => {
+      debug(error)
       debug(
         `Attempt ${error.attemptNumber} failed. There are ${
           error.attemptsLeft
@@ -196,6 +192,7 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
 const graphqlGot = async (where, query, variables = {}) => {
   let result = []
   let data
+  let lastCreated
   try {
     let after = false
     let created
@@ -203,6 +200,12 @@ const graphqlGot = async (where, query, variables = {}) => {
     do {
       const then = Date.now()
       data = await graphqlGotImp(where, query, { ...variables, after, created })
+
+      if (data.search.edges.length) {
+        lastCreated =
+          data.search.edges[data.search.edges.length - 1].node.createdAt
+      }
+
       result = uniqBy(
         result.concat(data.search.edges),
         'node.databaseId'
@@ -221,11 +224,20 @@ const graphqlGot = async (where, query, variables = {}) => {
           data.rateLimit
         )
       } else {
+        // FIXME: possible infinite loop
+        // If 1000 people registered on the same date
+        // created will be the same as the previous one
+        // Workaround: go to previous date but skip a few people
+        debug('lastCreated', lastCreated)
+        // created = lastCreated
+        created = result.length < userCount && lastCreated
+        /*
         created =
           result.length < userCount &&
-          new Date(
-            data.search.edges[data.search.edges.length - 1].node.createdAt
-          )
+          new Date(lastCreated)
+          // data.search.edges[data.search.edges.length - 1].node.createdAt)
+        */
+        debug('created', created)
       }
     } while (after || created)
   } catch (e) {
