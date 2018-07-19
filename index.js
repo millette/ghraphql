@@ -246,11 +246,11 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
 
 const graphqlGot = async (where, query, variables = {}) => {
   // let result = []
-  // let data
+  let data
   let lastCreated
   try {
     let result = []
-    let data
+    // let data
     let after = false
     let created
     let userCount
@@ -310,7 +310,11 @@ const graphqlGot = async (where, query, variables = {}) => {
     // Solution: retry for an earlier date?
     debug('FIXME?')
     debug('lastCreated:', lastCreated)
+    debug(Object.keys(data))
     debug(e)
+    if (data && data.search && data.search.edges && data.search.edges.length) {
+      return data
+    }
     throw e
   }
   /*
