@@ -17,6 +17,7 @@ const delay = require('delay')
 const debug = require('debug')(name)
 // const ProgressBar = require('progress')
 
+const MIN_WAIT = 1000
 const GOT_OPTS = {
   /*
   retry: {
@@ -33,6 +34,22 @@ const GOT_OPTS = {
 }
 
 const WHERE_ERROR = '"where" argument should be a string or an array.'
+
+const RETRY_OPTS = {
+  retries: 10,
+  factor: 2,
+  minTimeout: 8 * MIN_WAIT,
+  maxTimeout: 5 * 60 * 1000,
+  // randomize: true,
+  onFailedAttempt: error => {
+    debug(error.toString())
+    debug(
+      `Attempt ${error.attemptNumber} failed. There are ${
+        error.attemptsLeft
+      } attempts left.`
+    )
+  }
+}
 
 const localFile = path => readFileSync(join(__dirname, path), 'utf-8')
 
@@ -71,28 +88,19 @@ const gotRetry = (query, variables) => {
     got('https://api.github.com/graphql', {
       ...GOT_OPTS,
       body: { query, variables }
+    }).then(ret => {
+      debug(ret.headers)
+      debug(Object.keys(ret.body))
+      return ret
     })
-      .then(ret => {
-        debug(ret.headers)
-        debug(Object.keys(ret.body))
-        return ret
-      })
+  /*
       .catch(error => {
         debug(error)
         throw error
       })
+      */
 
-  return pRetry(gotRun, {
-    retries: 15,
-    onFailedAttempt: error => {
-      debug(error.toString())
-      debug(
-        `Attempt ${error.attemptNumber} failed. There are ${
-          error.attemptsLeft
-        } attempts left.`
-      )
-    }
-  })
+  return pRetry(gotRun, RETRY_OPTS)
 }
 
 const graphqlGotImp = async (where, query, variables = {}) => {
@@ -179,9 +187,9 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
   let ms
 
   if (rateLimit.cost > remaining) {
-    ms = timeUntilReset + 1000
+    ms = timeUntilReset + 2 * MIN_WAIT
   } else if (timeNeeded > timeUntilReset && costNeeded > remaining) {
-    ms = Math.max(500, Math.round(0.75 * (ttt - Math.round(elapsed))))
+    ms = Math.max(MIN_WAIT, Math.round(0.75 * (ttt - Math.round(elapsed))))
     /*
       Math.round(0.75 * (
         (Date.parse(rateLimit.resetAt) - now) /
@@ -191,7 +199,7 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
     )
     */
   } else {
-    ms = 500
+    ms = MIN_WAIT
   }
 
   /*
@@ -237,10 +245,12 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
 }
 
 const graphqlGot = async (where, query, variables = {}) => {
-  let result = []
-  let data
+  // let result = []
+  // let data
   let lastCreated
   try {
+    let result = []
+    let data
     let after = false
     let created
     let userCount
@@ -252,6 +262,8 @@ const graphqlGot = async (where, query, variables = {}) => {
         lastCreated =
           data.search.edges[data.search.edges.length - 1].node.createdAt
       }
+
+      debug('lastCreated:', lastCreated)
 
       result = uniqBy(
         result.concat(data.search.edges),
@@ -275,9 +287,9 @@ const graphqlGot = async (where, query, variables = {}) => {
         // If 1000 people registered on the same date
         // created will be the same as the previous one
         // Workaround: go to previous date but skip a few people
-        debug('lastCreated', lastCreated)
         // created = lastCreated
         created = result.length < userCount && lastCreated
+        debug('created', created)
         /*
         created =
           result.length < userCount &&
@@ -287,13 +299,26 @@ const graphqlGot = async (where, query, variables = {}) => {
         debug('created', created)
       }
     } while (after || created)
+
+    if (result.length) {
+      data.search.edges = result
+    }
+    return data
   } catch (e) {
+    // FIXME: can't complete romania query
+    // it fails after 10 retries
+    // Solution: retry for an earlier date?
+    debug('FIXME?')
+    debug('lastCreated:', lastCreated)
+    debug(e)
     throw e
   }
+  /*
   if (result.length) {
     data.search.edges = result
   }
   return data
+  */
 }
 
 module.exports = graphqlGot
