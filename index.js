@@ -15,9 +15,9 @@ const uniq = require('lodash.uniq')
 const uniqBy = require('lodash.uniqby')
 const delay = require('delay')
 const debug = require('debug')(name)
-// const ProgressBar = require('progress')
 
 const MIN_WAIT = 1000
+
 const GOT_OPTS = {
   /*
   retry: {
@@ -35,6 +35,8 @@ const GOT_OPTS = {
 
 const WHERE_ERROR = '"where" argument should be a string or an array.'
 
+let tickerWarn
+
 const RETRY_OPTS = {
   retries: 10,
   factor: 2,
@@ -42,6 +44,9 @@ const RETRY_OPTS = {
   maxTimeout: 5 * 60 * 1000,
   // randomize: true,
   onFailedAttempt: error => {
+    if (tickerWarn) {
+      tickerWarn(error)
+    }
     debug(error.toString())
     debug(
       `Attempt ${error.attemptNumber} failed. There are ${
@@ -244,7 +249,11 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
   }
 }
 
-const graphqlGot = async (where, query, variables = {}) => {
+const graphqlGot = async (where, query, variables = {}, tick = false) => {
+  // let bar
+
+  let r2
+  let first = true
   // let result = []
   let data
   let lastCreated
@@ -258,6 +267,16 @@ const graphqlGot = async (where, query, variables = {}) => {
       const then = Date.now()
       data = await graphqlGotImp(where, query, { ...variables, after, created })
 
+      /*
+      if (!bar) {
+        bar = new ProgressBar(':bar :elapsed :eta :rate', {
+          total: data.search.userCount,
+          width: process.stdout.columns - 20,
+          renderThrottle: 300
+        })
+      }
+      */
+
       if (data.search.edges.length) {
         lastCreated =
           data.search.edges[data.search.edges.length - 1].node.createdAt
@@ -265,14 +284,27 @@ const graphqlGot = async (where, query, variables = {}) => {
 
       debug('lastCreated:', lastCreated)
 
+      r2 = result.length
       result = uniqBy(
         result.concat(data.search.edges),
         'node.databaseId'
         // ({ node }) => node.databaseId
       )
+
       if (!userCount) {
         userCount = data.search.userCount
       }
+
+      if (tick) {
+        if (first) {
+          tickerWarn = warn => tick(0, { warn })
+          tick(result.length - r2, { total: userCount })
+          first = false
+        } else {
+          tick(result.length - r2)
+        }
+      }
+
       debug('result.length, userCount:', result.length, userCount)
       after = data.search.pageInfo.hasNextPage && data.search.pageInfo.endCursor
       if (after) {
