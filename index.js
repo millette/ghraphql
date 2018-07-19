@@ -163,7 +163,7 @@ const graphqlGotImp = async (where, query, variables = {}) => {
 
 const throttle = async (then, userCount, nPerQuery, rateLimit) => {
   const now = Date.now()
-  const { remaining } = rateLimit || 5000
+  const remaining = rateLimit.remaining || rateLimit.limit
   const elapsed = now - then
   debug('elapsed, rateLimit:', elapsed, rateLimit)
   const ttt = Math.round(
