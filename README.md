@@ -68,12 +68,13 @@ $ ghraphql <location> [<location> ...]
 
 ```
 --readme                Show readme
---pretty            -p  Pretty output
 --verbose           -v  Verbose mode
---query             -q  Query to run
+--before            -b  Before date, 2018-06-21 or 2018-07-21T10:40:40Z
+--pretty            -p  Pretty output
 --last-starred      -s  Include these last starred repositories (50)
 --last-repos        -r  Include these last repositories contributed to (50)
 --last-stargazers   -g  Include these last stargazers (50)
+--query             -q  Query to run
 ```
 
 ## Examples

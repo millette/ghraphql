@@ -34,6 +34,7 @@ const run = async cli => {
   // FIXME: use last 5, 10 and 15 minutes
   // to measure average durations
   const makeApprox = bar =>
+    bar.curr &&
     Math.round((Date.now() - startTime) / 1000 * bar.total / bar.curr)
 
   try {
@@ -49,6 +50,7 @@ const run = async cli => {
     }
 
     const variables = {
+      created: cli.flags.before,
       lastStarred: parseInt(cli.flags.lastStarred, 10),
       lastRepos: parseInt(cli.flags.lastRepos, 10),
       lastStargazers: parseInt(cli.flags.lastStargazers, 10)
@@ -114,6 +116,9 @@ const run = async cli => {
       estimator = setInterval(() => {
         if (bar && bar.total) {
           const approx = makeApprox(bar)
+          if (!approx) {
+            return
+          }
           const min = Math.floor(approx / 60)
           const sec = approx - min * 60
           bar.interrupt(
@@ -141,6 +146,12 @@ const run = async cli => {
     if (cli.flags.verbose) {
       console.error('Results found:', body.search.edges.length)
       console.error('Rate limits:', body.rateLimit)
+      if (body.search.edges.length) {
+        console.error(
+          'Last date:',
+          body.search.edges[body.search.edges.length - 1].node.createdAt
+        )
+      }
     }
     console.log(JSON.stringify(body, null, cli.flags.pretty ? '  ' : ''))
   } catch (e) {
@@ -158,12 +169,13 @@ run(
 
   Options
     --readme                Show readme
-    --pretty            -p  Pretty output
     --verbose           -v  Verbose mode
-    --query             -q  Query to run
+    --pretty            -p  Pretty output
+    --before            -b  Before date, 2018-06-21 or 2018-07-21T10:40:40Z
     --last-starred      -s  Include these last starred repositories (50)
     --last-repos        -r  Include these last repositories contributed to (50)
     --last-stargazers   -g  Include these last stargazers (50)
+    --query             -q  Query to run
 
   Examples
     $ ghraphql Montréal
@@ -174,6 +186,10 @@ run(
 `,
     {
       flags: {
+        before: {
+          type: 'string',
+          alias: 'b'
+        },
         'last-starred': {
           type: 'string',
           alias: 's'

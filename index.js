@@ -16,7 +16,7 @@ const uniqBy = require('lodash.uniqby')
 const delay = require('delay')
 const debug = require('debug')(name)
 
-const MIN_WAIT = 1000
+const MIN_WAIT = 2000
 
 const GOT_OPTS = {
   retries: 0,
@@ -32,10 +32,10 @@ const WHERE_ERROR = '"where" argument should be a string or an array.'
 let tickerWarn = () => false
 
 const RETRY_OPTS = {
-  retries: 10,
+  retries: 5,
   factor: 4,
   minTimeout: 4 * MIN_WAIT,
-  maxTimeout: 30 * 60 * 1000,
+  maxTimeout: 30 * MIN_WAIT,
   randomize: true,
   onFailedAttempt: error => {
     tickerWarn(`${new Date().toISOString()} ${error.toString()}`)
@@ -216,6 +216,9 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
   try {
     let after = false
     let created
+    if (variables.created) {
+      created = variables.created
+    }
     let userCount
     do {
       const then = Date.now()
