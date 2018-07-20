@@ -27,8 +27,14 @@ const readme = marked(localFile('README.md'))
 
 const run = async cli => {
   let timing
+  let estimator
 
   const startTime = Date.now()
+
+  // FIXME: use last 5, 10 and 15 minutes
+  // to measure average durations
+  const makeApprox = bar =>
+    Math.round((Date.now() - startTime) / 1000 * bar.total / bar.curr)
 
   try {
     if (cli.flags.readme) {
@@ -51,7 +57,7 @@ const run = async cli => {
     if (cli.flags.verbose) {
       const locations = deburred(cli.input)
       if (locations.length > 1) {
-        console.error('Locations:', locations)
+        console.error('Locations:', locations.join(', '))
       } else {
         console.error('Location:', locations[0])
       }
@@ -59,48 +65,64 @@ const run = async cli => {
 
     let bar
 
-    const tick = (n, { total, warn } = {}) => {
-      if (cli.flags.verbose && total) {
-        console.error('Number of results:', total)
-      }
-
-      if (total && !bar) {
-        if (process.stderr.columns < 50) {
-          console.error('Terminal is very narrow')
+    const tick =
+      cli.flags.verbose &&
+      ((n, { total, warn } = {}) => {
+        // if (cli.flags.verbose && total) {
+        if (total) {
+          console.error('Number of results:', total)
         }
 
-        const width = Math.min(100, process.stderr.columns) - 38
-        bar = new ProgressBar(
-          ':bar :percent :elapseds :etas :approxs :rate users/s',
-          {
-            head: '>',
-            total,
-            width,
-            renderThrottle: BAR_THROTTLE
+        if (total && !bar) {
+          if (process.stderr.columns < 60) {
+            console.error('Terminal is very narrow')
           }
-        )
-      } else {
-        if (warn) {
-          bar.interrupt(warn)
-        } else {
-          bar.tick(n, {
-            approx: Math.round(
-              (Date.now() - startTime) / 1000 * bar.total / bar.curr
-            )
-          })
-        }
-      }
-    }
 
-    timing = setInterval(() => {
-      if (!bar) {
-        return
-      }
-      bar.tick(0)
-      if (bar.complete) {
-        clearInterval(timing)
-      }
-    }, BAR_THROTTLE)
+          const width = Math.max(15, Math.min(100, process.stderr.columns) - 45)
+          // FIXME: split on 2 lines or more (or use multiple bars)
+          bar = new ProgressBar(
+            ':bar :percent :elapseds :etas :approxs :rate users/s :current',
+            {
+              head: '>',
+              total,
+              width,
+              renderThrottle: BAR_THROTTLE
+            }
+          )
+        } else {
+          if (warn) {
+            bar.interrupt(warn)
+          } else {
+            bar.tick(n, {
+              approx: makeApprox(bar)
+            })
+          }
+        }
+      })
+
+    if (cli.flags.verbose) {
+      timing = setInterval(() => {
+        if (!bar) {
+          return
+        }
+        bar.tick(0)
+        if (bar.complete) {
+          clearInterval(timing)
+        }
+      }, BAR_THROTTLE)
+
+      estimator = setInterval(() => {
+        if (bar && bar.total) {
+          const approx = makeApprox(bar)
+          const min = Math.floor(approx / 60)
+          const sec = approx - min * 60
+          bar.interrupt(
+            `Initial estimated duration: ${min}m${sec}s (${approx}s)`
+          )
+          clearInterval(estimator)
+        }
+      }, 20000)
+    }
 
     const body = await graphqlGot(
       cli.input,
@@ -114,13 +136,16 @@ const run = async cli => {
     )
 
     clearInterval(timing)
+    clearInterval(estimator)
 
     if (cli.flags.verbose) {
       console.error('Results found:', body.search.edges.length)
+      console.error('Rate limits:', body.rateLimit)
     }
     console.log(JSON.stringify(body, null, cli.flags.pretty ? '  ' : ''))
   } catch (e) {
     clearInterval(timing)
+    clearInterval(estimator)
     console.error(e.errors ? e : e.toString())
   }
 }

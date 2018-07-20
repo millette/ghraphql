@@ -19,6 +19,7 @@ const debug = require('debug')(name)
 const MIN_WAIT = 1000
 
 const GOT_OPTS = {
+  retries: 0,
   json: true,
   headers: {
     authorization: `bearer ${process.env.GITHUB_TOKEN}`,
@@ -28,18 +29,22 @@ const GOT_OPTS = {
 
 const WHERE_ERROR = '"where" argument should be a string or an array.'
 
-let tickerWarn
+let tickerWarn = () => false
 
 const RETRY_OPTS = {
   retries: 10,
-  factor: 2,
-  minTimeout: 8 * MIN_WAIT,
-  maxTimeout: 5 * 60 * 1000,
-  // randomize: true,
+  factor: 4,
+  minTimeout: 4 * MIN_WAIT,
+  maxTimeout: 30 * 60 * 1000,
+  randomize: true,
   onFailedAttempt: error => {
-    if (tickerWarn) {
-      tickerWarn(error)
-    }
+    tickerWarn(`${new Date().toISOString()} ${error.toString()}`)
+    tickerWarn(
+      `${new Date().toISOString()} Attempt ${
+        error.attemptNumber
+      } failed. There are ${error.attemptsLeft} attempts left.`
+    )
+
     debug(error.toString())
     debug(
       `Attempt ${error.attemptNumber} failed. There are ${
@@ -86,11 +91,22 @@ const gotRetry = (query, variables) => {
     got('https://api.github.com/graphql', {
       ...GOT_OPTS,
       body: { query, variables }
-    }).then(ret => {
-      debug(ret.headers)
-      debug(Object.keys(ret.body))
-      return ret
     })
+      .then(ret => {
+        debug(ret.headers)
+        debug(Object.keys(ret.body))
+        return ret
+      })
+      .catch(error => {
+        debug('ERROR', error)
+        throw error.statusCode === 401 ? new pRetry.AbortError(error) : error
+        /*
+        if (error.statusCode === 401) {
+          throw new pRetry.AbortError(error)
+        }
+        throw error
+        */
+      })
 
   return pRetry(gotRun, RETRY_OPTS)
 }
@@ -194,9 +210,9 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
   let r2
   let first = true
   let data
+  let result = []
   let lastCreated
   try {
-    let result = []
     let after = false
     let created
     let userCount
@@ -251,9 +267,16 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
   } catch (e) {
     debug('FIXME?')
     debug('lastCreated:', lastCreated)
-    debug(Object.keys(data))
     debug(e)
-    if (data && data.search && data.search.edges && data.search.edges.length) {
+    if (
+      result.length &&
+      data &&
+      data.search &&
+      data.search.edges &&
+      data.search.edges.length
+    ) {
+      debug(Object.keys(data))
+      data.search.edges = result
       return data
     }
     throw e
