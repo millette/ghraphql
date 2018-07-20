@@ -19,13 +19,6 @@ const debug = require('debug')(name)
 const MIN_WAIT = 1000
 
 const GOT_OPTS = {
-  /*
-  retry: {
-    retries: 10,
-    methods: ['POST'],
-    statusCodes: [403, 408, 413, 429, 502, 503, 504]
-  },
-*/
   json: true,
   headers: {
     authorization: `bearer ${process.env.GITHUB_TOKEN}`,
@@ -98,12 +91,6 @@ const gotRetry = (query, variables) => {
       debug(Object.keys(ret.body))
       return ret
     })
-  /*
-      .catch(error => {
-        debug(error)
-        throw error
-      })
-      */
 
   return pRetry(gotRun, RETRY_OPTS)
 }
@@ -141,15 +128,6 @@ const graphqlGotImp = async (where, query, variables = {}) => {
     debug('variables:', variables)
 
     const { body: { data, errors } } = await gotRetry(query, variables)
-    /*
-    const { body: { data, errors } } = await got(
-      'https://api.github.com/graphql',
-      {
-        ...GOT_OPTS,
-        body: { query, variables }
-      }
-    )
-    */
 
     if (errors) {
       const err = new Error(`GraphQL: ${errors[0].message}`)
@@ -195,29 +173,9 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
     ms = timeUntilReset + 2 * MIN_WAIT
   } else if (timeNeeded > timeUntilReset && costNeeded > remaining) {
     ms = Math.max(MIN_WAIT, Math.round(0.75 * (ttt - Math.round(elapsed))))
-    /*
-      Math.round(0.75 * (
-        (Date.parse(rateLimit.resetAt) - now) /
-          Math.round(remaining / rateLimit.cost) -
-          Math.round(elapsed)
-      ))
-    )
-    */
   } else {
     ms = MIN_WAIT
   }
-
-  /*
-  // let ms = Math.max(
-  const ms = (rateLimit.cost > rateLimit.remaining) ? (timeUntilReset + 1000) : Math.max(
-    500,
-    Math.round(0.75 * (
-      (Date.parse(rateLimit.resetAt) - now) /
-        Math.round(rateLimit.remaining / rateLimit.cost) -
-        Math.round(elapsed)
-    ))
-  )
-  */
 
   debug('nQueries:', nQueries)
   debug('timeNeeded:', timeNeeded)
@@ -227,55 +185,24 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
 
   await delay(ms)
 
-  /*
-  if (rateLimit.cost > rateLimit.remaining) {
-    ms = timeUntilReset + 1000
-  }
-
-  // if (ms > 200 && ((timeNeeded > timeUntilReset) || (costNeeded > rateLimit.remaining))) {
-  if (
-    // ms > 6500 &&
-    timeNeeded > timeUntilReset &&
-    costNeeded > rateLimit.remaining
-  ) {
-    debug('ms:', ms)
-    await delay(ms)
-  } else {
-    debug('no wait')
-  }
-  */
   if (process.env.DEBUG === name) {
     console.error()
   }
 }
 
 const graphqlGot = async (where, query, variables = {}, tick = false) => {
-  // let bar
-
   let r2
   let first = true
-  // let result = []
   let data
   let lastCreated
   try {
     let result = []
-    // let data
     let after = false
     let created
     let userCount
     do {
       const then = Date.now()
       data = await graphqlGotImp(where, query, { ...variables, after, created })
-
-      /*
-      if (!bar) {
-        bar = new ProgressBar(':bar :elapsed :eta :rate', {
-          total: data.search.userCount,
-          width: process.stdout.columns - 20,
-          renderThrottle: 300
-        })
-      }
-      */
 
       if (data.search.edges.length) {
         lastCreated =
@@ -285,11 +212,7 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
       debug('lastCreated:', lastCreated)
 
       r2 = result.length
-      result = uniqBy(
-        result.concat(data.search.edges),
-        'node.databaseId'
-        // ({ node }) => node.databaseId
-      )
+      result = uniqBy(result.concat(data.search.edges), 'node.databaseId')
 
       if (!userCount) {
         userCount = data.search.userCount
@@ -315,19 +238,8 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
           data.rateLimit
         )
       } else {
-        // FIXME: possible infinite loop
-        // If 1000 people registered on the same date
-        // created will be the same as the previous one
-        // Workaround: go to previous date but skip a few people
-        // created = lastCreated
         created = result.length < userCount && lastCreated
         debug('created', created)
-        /*
-        created =
-          result.length < userCount &&
-          new Date(lastCreated)
-          // data.search.edges[data.search.edges.length - 1].node.createdAt)
-        */
         debug('created', created)
       }
     } while (after || created)
@@ -337,9 +249,6 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
     }
     return data
   } catch (e) {
-    // FIXME: can't complete romania query
-    // it fails after 10 retries
-    // Solution: retry for an earlier date?
     debug('FIXME?')
     debug('lastCreated:', lastCreated)
     debug(Object.keys(data))
@@ -349,12 +258,6 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
     }
     throw e
   }
-  /*
-  if (result.length) {
-    data.search.edges = result
-  }
-  return data
-  */
 }
 
 module.exports = graphqlGot

@@ -27,24 +27,8 @@ const readme = marked(localFile('README.md'))
 
 const run = async cli => {
   let timing
-  // let etaTimer
 
   const startTime = Date.now()
-
-  /*
-  const etaTimerFn = (bar, n = 15000) => {
-    etaTimer = setTimeout(() => {
-      if (!bar || !bar.curr || !bar.total) { return etaTimerFn(bar, n) }
-      // in 30 seconds, we did bar.curr / bar.total
-      // 30 = bar.curr
-      // x = bar.total
-      // 5% en 30s; 20 x 30s = 600s approx.
-      //
-      bar.interrupt(`Approx. ${Math.round(((Date.now() - startTime) / 1000) * bar.total / bar.curr)}s`)
-      etaTimerFn(bar, Math.min(120000, n * 2))
-    }, n)
-  }
-  */
 
   try {
     if (cli.flags.readme) {
@@ -95,8 +79,6 @@ const run = async cli => {
             renderThrottle: BAR_THROTTLE
           }
         )
-
-        // etaTimerFn(bar)
       } else {
         if (warn) {
           bar.interrupt(warn)
@@ -132,7 +114,6 @@ const run = async cli => {
     )
 
     clearInterval(timing)
-    // clearTimeout(etaTimer)
 
     if (cli.flags.verbose) {
       console.error('Results found:', body.search.edges.length)
@@ -140,7 +121,6 @@ const run = async cli => {
     console.log(JSON.stringify(body, null, cli.flags.pretty ? '  ' : ''))
   } catch (e) {
     clearInterval(timing)
-    // clearTimeout(etaTimer)
     console.error(e.errors ? e : e.toString())
   }
 }
