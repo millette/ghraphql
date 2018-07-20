@@ -206,6 +206,7 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
   }
 }
 
+// FIXME: search before specified date
 const graphqlGot = async (where, query, variables = {}, tick = false) => {
   let r2
   let first = true
@@ -265,7 +266,8 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
     }
     return data
   } catch (e) {
-    debug('FIXME?')
+    // FIXME: Get stuck on 502 errors
+    debug('FIXME (statusCode) ?', e.statusCode)
     debug('lastCreated:', lastCreated)
     debug(e)
     if (
