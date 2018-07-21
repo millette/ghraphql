@@ -86,7 +86,8 @@ const makeSearch = (where, created) =>
 
 const defaultQuery = localFile('query.graphql')
 
-const gotRetryImp = (query, variables) => {
+// const gotRetryImp = (query, variables) => {
+const gotRetry = async (query, variables) => {
   const gotRun = () =>
     got('https://api.github.com/graphql', {
       ...GOT_OPTS,
@@ -105,6 +106,7 @@ const gotRetryImp = (query, variables) => {
   return pRetry(gotRun, RETRY_OPTS)
 }
 
+/*
 const gotRetry = async (query, variables) => {
   let ret
   let tries = 5
@@ -147,6 +149,7 @@ const gotRetry = async (query, variables) => {
   }
   throw new Error('No results, hmm...')
 }
+*/
 
 const graphqlGotImp = async (where, query, variables = {}) => {
   try {
