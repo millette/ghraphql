@@ -92,6 +92,9 @@ const run = async cli => {
             }
           )
         } else {
+          if (!bar) {
+            return
+          }
           if (warn) {
             bar.interrupt(warn)
           } else {

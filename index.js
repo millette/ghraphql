@@ -1,5 +1,8 @@
 'use strict'
 
+// FIXME: check rate limits before retrying
+// see error.headers
+
 // core
 const { readFileSync } = require('fs')
 const { join } = require('path')
@@ -33,10 +36,7 @@ let tickerWarn = () => false
 
 const RETRY_OPTS = {
   retries: 5,
-  factor: 4,
-  minTimeout: 4 * MIN_WAIT,
-  maxTimeout: 30 * MIN_WAIT,
-  randomize: true,
+  minTimeout: 10000,
   onFailedAttempt: error => {
     tickerWarn(`${new Date().toISOString()} ${error.toString()}`)
     tickerWarn(
@@ -86,7 +86,7 @@ const makeSearch = (where, created) =>
 
 const defaultQuery = localFile('query.graphql')
 
-const gotRetry = (query, variables) => {
+const gotRetryImp = (query, variables) => {
   const gotRun = () =>
     got('https://api.github.com/graphql', {
       ...GOT_OPTS,
@@ -100,15 +100,52 @@ const gotRetry = (query, variables) => {
       .catch(error => {
         debug('ERROR', error)
         throw error.statusCode === 401 ? new pRetry.AbortError(error) : error
-        /*
-        if (error.statusCode === 401) {
-          throw new pRetry.AbortError(error)
-        }
-        throw error
-        */
       })
 
   return pRetry(gotRun, RETRY_OPTS)
+}
+
+const gotRetry = async (query, variables) => {
+  let ret
+  let tries = 5
+  let error
+
+  while (--tries) {
+    try {
+      ret = await gotRetryImp(query, variables)
+      error = false
+      break
+    } catch (e) {
+      console.error(' tries left:', tries)
+
+      console.error(' variables:', variables)
+      console.error(' last created:', variables.created)
+
+      error = e
+      if (e.statusCode === 401) {
+        break
+      }
+
+      console.error(' ok222', ret && Object.keys(ret))
+
+      if (ret && ret.search && ret.search.edges && ret.search.edges.length) {
+        variables.created =
+          ret.search.edges[ret.search.edges.length - 1].node.createdAt
+        console.error(' ok333')
+        console.error(' variables:', variables)
+        console.error(' last created:', variables.created)
+      }
+      await delay(15000)
+    }
+  }
+
+  if (error) {
+    throw error
+  }
+  if (ret) {
+    return ret
+  }
+  throw new Error('No results, hmm...')
 }
 
 const graphqlGotImp = async (where, query, variables = {}) => {
