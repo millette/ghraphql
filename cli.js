@@ -142,10 +142,6 @@ const run = async cli => {
       tick
     )
 
-    if (cli.flags.verbose) {
-      console.error()
-    }
-
     clearInterval(timing)
     clearInterval(estimator)
 
@@ -161,7 +157,7 @@ const run = async cli => {
     }
     const output = JSON.stringify(body, null, cli.flags.pretty ? '  ' : '')
     if (cli.flags.output) {
-      writeFileSync(cli.flags.output, output)
+      writeFileSync(`${basename(cli.flags.output, '.json')}.json`, output)
     } else {
       console.log(output)
     }
