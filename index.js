@@ -130,6 +130,14 @@ const gotRetry = async (query, variables) => {
 
       console.error(' ok222', ret && Object.keys(ret))
 
+      const c = variables.loc.split(' created:<=')[1]
+      console.error(' c:', c)
+      if (c) {
+        variables.created = c
+        variables.after = false
+        console.error(' variables444:', variables)
+      }
+
       if (ret && ret.search && ret.search.edges && ret.search.edges.length) {
         variables.created =
           ret.search.edges[ret.search.edges.length - 1].node.createdAt
