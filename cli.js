@@ -3,7 +3,7 @@
 'use strict'
 
 // core
-const { readFileSync } = require('fs')
+const { readFileSync, writeFileSync } = require('fs')
 const { basename } = require('path')
 
 // npm
@@ -156,7 +156,12 @@ const run = async cli => {
         )
       }
     }
-    console.log(JSON.stringify(body, null, cli.flags.pretty ? '  ' : ''))
+    const output = JSON.stringify(body, null, cli.flags.pretty ? '  ' : '')
+    if (cli.flags.output) {
+      writeFileSync(cli.flags.output, output)
+    } else {
+      console.log(output)
+    }
   } catch (e) {
     clearInterval(timing)
     clearInterval(estimator)
@@ -174,6 +179,7 @@ run(
     --readme                Show readme
     --verbose           -v  Verbose mode
     --pretty            -p  Pretty output
+    --output            -o  Output to file
     --before            -b  Before date, 2018-06-21 or 2018-07-21T10:40:40Z
     --last-starred      -s  Include these last starred repositories (50)
     --last-repos        -r  Include these last repositories contributed to (50)
@@ -189,6 +195,10 @@ run(
 `,
     {
       flags: {
+        output: {
+          type: 'string',
+          alias: 'o'
+        },
         before: {
           type: 'string',
           alias: 'b'
