@@ -106,59 +106,6 @@ const gotRetry = async (query, variables) => {
   return pRetry(gotRun, RETRY_OPTS)
 }
 
-/*
-const gotRetry = async (query, variables) => {
-  let ret
-  let tries = 5
-  let error
-
-  while (--tries) {
-    try {
-      ret = await gotRetryImp(query, variables)
-      error = false
-      break
-    } catch (e) {
-      console.error(' tries left:', tries)
-
-      console.error(' variables:', variables)
-      console.error(' last created:', variables.created)
-
-      error = e
-      if (e.statusCode === 401) {
-        break
-      }
-
-      console.error(' ok222', ret && Object.keys(ret))
-
-      const c = variables.loc.split(' created:<=')[1]
-      console.error(' c:', c)
-      if (c) {
-        variables.created = c
-        variables.after = false
-        console.error(' variables444:', variables)
-      }
-
-      if (ret && ret.search && ret.search.edges && ret.search.edges.length) {
-        variables.created =
-          ret.search.edges[ret.search.edges.length - 1].node.createdAt
-        console.error(' ok333')
-        console.error(' variables:', variables)
-        console.error(' last created:', variables.created)
-      }
-      await delay(15000)
-    }
-  }
-
-  if (error) {
-    throw error
-  }
-  if (ret) {
-    return ret
-  }
-  throw new Error('No results, hmm...')
-}
-*/
-
 const graphqlGotImp = async (where, query, variables = {}) => {
   try {
     let created

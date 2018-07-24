@@ -70,7 +70,6 @@ const run = async cli => {
     const tick =
       cli.flags.verbose &&
       ((n, { total, warn } = {}) => {
-        // if (cli.flags.verbose && total) {
         if (total) {
           console.error('Number of results:', total)
         }
@@ -142,6 +141,10 @@ const run = async cli => {
       variables,
       tick
     )
+
+    if (cli.flags.verbose) {
+      console.error()
+    }
 
     clearInterval(timing)
     clearInterval(estimator)
