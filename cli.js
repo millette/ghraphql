@@ -4,7 +4,7 @@
 
 // core
 const { readFileSync, writeFileSync } = require('fs')
-const { basename } = require('path')
+const { resolve, dirname, basename, format } = require('path')
 
 // npm
 const meow = require('meow')
@@ -24,6 +24,15 @@ marked.setOptions({
 })
 
 const readme = marked(localFile('README.md'))
+
+const normalizePath = (fn, ext) =>
+  resolve(
+    format({
+      dir: dirname(fn),
+      name: basename(fn, ext),
+      ext
+    })
+  )
 
 const run = async cli => {
   let timing
@@ -134,10 +143,7 @@ const run = async cli => {
     const body = await graphqlGot(
       cli.input,
       cli.flags.query &&
-        readFileSync(
-          `${basename(cli.flags.query, '.graphql')}.graphql`,
-          'utf-8'
-        ),
+        readFileSync(normalizePath(cli.flags.query, '.graphql'), 'utf-8'),
       variables,
       tick
     )
@@ -153,7 +159,7 @@ const run = async cli => {
     }
     const output = JSON.stringify(body, null, cli.flags.pretty ? '  ' : '')
     if (cli.flags.output) {
-      writeFileSync(`${basename(cli.flags.output, '.json')}.json`, output)
+      writeFileSync(normalizePath(cli.flags.output, '.json'), output)
     } else {
       console.log(output)
     }
