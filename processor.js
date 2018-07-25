@@ -201,7 +201,8 @@ const slim = x => {
 
 const accumulator = (g, acc, b) => {
   if (b[g]) {
-    b[g].forEach(x => acc.set(x.name, (acc.get(x.name) || 0) + x.count))
+    // b[g].forEach(x => acc.set(x.name, (acc.get(x.name) || 0) + x.count)) // count total projects
+    b[g].forEach(x => acc.set(x.name, (acc.get(x.name) || 0) + 1)) // count total users
   }
   return acc
 }
