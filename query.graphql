@@ -26,6 +26,9 @@ query ElUsers(
           name
           login
           databaseId
+          company
+          bio
+          email
           location
           createdAt
           isHireable
