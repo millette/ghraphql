@@ -55,6 +55,7 @@ query ElUsers(
                     starredAt
                     node {
                       login
+                      databaseId
                       location
                       createdAt
                     }
