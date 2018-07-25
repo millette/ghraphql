@@ -87,7 +87,6 @@ const makeSearch = (where, created) =>
 
 const defaultQuery = localFile('query.graphql')
 
-// const gotRetryImp = (query, variables) => {
 const gotRetry = async (query, variables) => {
   const gotRun = () =>
     got('https://api.github.com/graphql', {
@@ -95,20 +94,9 @@ const gotRetry = async (query, variables) => {
       body: { query, variables }
     })
       .then(ret => {
-        // const fetchedAt = new Date().toISOString()
         debug(ret.headers)
         debug(Object.keys(ret.body))
         return ret
-        /*
-        return {
-          ...ret.body,
-          search: {
-            edges: ret.body.search.edges.map((x) => ({
-              node: { fetchedAt }
-            }))
-          }
-        }
-        */
       })
       .catch(error => {
         debug('ERROR', error)

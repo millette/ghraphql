@@ -147,16 +147,9 @@ const run = async cli => {
 
     if (cli.flags.verbose) {
       console.error('Results found:', body.users.length)
-      /*
-      console.error('Results found:', body.search.edges.length)
-      console.error('Rate limits:', body.rateLimit)
-      if (body.search.edges.length) {
-        console.error(
-          'Last date:',
-          body.search.edges[body.search.edges.length - 1].node.createdAt
-        )
+      if (body.users.length) {
+        console.error('Last date:', body.users[body.users.length - 1].createdAt)
       }
-      */
     }
     const output = JSON.stringify(body, null, cli.flags.pretty ? '  ' : '')
     if (cli.flags.output) {

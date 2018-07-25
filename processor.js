@@ -1,7 +1,5 @@
 'use strict'
 
-// const data = require('./lhamilton-new-13.json')
-
 const sorter = (a, b) => {
   if (a[1] > b[1]) {
     return 1
@@ -219,13 +217,13 @@ const process = data => {
   const users = i2.map(slim)
   const repoLanguages = allLanguagesImp('repoLanguages', users)
   const starLanguages = allLanguagesImp('starLanguages', users)
+  data.meta.processedAt = new Date().toISOString()
   return {
-    meta: { ...data.meta, processedAt: new Date().toISOString() },
+    meta: data.meta,
     users,
     repoLanguages,
     starLanguages
   }
 }
 
-// console.log(process(data))
 module.exports = process
