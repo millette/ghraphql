@@ -94,9 +94,20 @@ const gotRetry = async (query, variables) => {
       body: { query, variables }
     })
       .then(ret => {
+        // const fetchedAt = new Date().toISOString()
         debug(ret.headers)
         debug(Object.keys(ret.body))
         return ret
+        /*
+        return {
+          ...ret.body,
+          search: {
+            edges: ret.body.search.edges.map((x) => ({
+              node: { fetchedAt }
+            }))
+          }
+        }
+        */
       })
       .catch(error => {
         debug('ERROR', error)
@@ -138,7 +149,11 @@ const graphqlGotImp = async (where, query, variables = {}) => {
 
     debug('variables:', variables)
 
-    const { body: { data, errors } } = await gotRetry(query, variables)
+    const { headers: { date }, body: { data, errors } } = await gotRetry(
+      query,
+      variables
+    )
+    const fetchedAt = new Date(date).toISOString()
 
     if (errors) {
       const err = new Error(`GraphQL: ${errors[0].message}`)
@@ -152,11 +167,17 @@ const graphqlGotImp = async (where, query, variables = {}) => {
       throw new Error('No data or data.search found.')
     }
 
-    if (!data.search.edges || !data.search.edges.length) {
-      data.search.edges = []
-      return data
-    }
-
+    data.search.edges =
+      data.search.edges && data.search.edges.length
+        ? data.search.edges.map(x => {
+          return {
+            node: {
+              ...x.node,
+              fetchedAt
+            }
+          }
+        })
+        : []
     return data
   } catch (e) {
     throw e
