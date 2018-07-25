@@ -9,6 +9,7 @@ const { join } = require('path')
 
 // self
 const { name, version } = require('./package.json')
+const processor = require('./processor')
 
 // npm
 const got = require('got')
@@ -178,6 +179,7 @@ const graphqlGotImp = async (where, query, variables = {}) => {
           }
         })
         : []
+
     return data
   } catch (e) {
     throw e
@@ -283,7 +285,9 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
     if (result.length) {
       data.search.edges = result
     }
-    return data
+
+    data.meta = { name, version }
+    return processor(data)
   } catch (e) {
     // FIXME: Get stuck on 502 errors
     debug('FIXME (statusCode) ?', e.statusCode)

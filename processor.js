@@ -220,7 +220,7 @@ const process = data => {
   const repoLanguages = allLanguagesImp('repoLanguages', users)
   const starLanguages = allLanguagesImp('starLanguages', users)
   return {
-    processedAt: new Date().toISOString(),
+    meta: { ...data.meta, processedAt: new Date().toISOString() },
     users,
     repoLanguages,
     starLanguages

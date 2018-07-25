@@ -146,6 +146,8 @@ const run = async cli => {
     clearInterval(estimator)
 
     if (cli.flags.verbose) {
+      console.error('Results found:', body.users.length)
+      /*
       console.error('Results found:', body.search.edges.length)
       console.error('Rate limits:', body.rateLimit)
       if (body.search.edges.length) {
@@ -154,6 +156,7 @@ const run = async cli => {
           body.search.edges[body.search.edges.length - 1].node.createdAt
         )
       }
+      */
     }
     const output = JSON.stringify(body, null, cli.flags.pretty ? '  ' : '')
     if (cli.flags.output) {
