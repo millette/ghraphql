@@ -44,12 +44,14 @@ const allUserLanguages = z => {
     ret.repoLanguages = Array.from(repoLanguages)
       .sort(sorter)
       .reverse()
+      .map(([name, count]) => ({ name, count }))
   }
 
   if (starLanguages.size) {
     ret.starLanguages = Array.from(starLanguages)
       .sort(sorter)
       .reverse()
+      .map(([name, count]) => ({ name, count }))
   }
 
   return ret
@@ -199,7 +201,7 @@ const slim = x => {
 
 const accumulator = (g, acc, b) => {
   if (b[g]) {
-    b[g].forEach(x => acc.set(x[0], (acc.get(x[0]) || 0) + x[1]))
+    b[g].forEach(x => acc.set(x.name, (acc.get(x.name) || 0) + x.count))
   }
   return acc
 }
@@ -208,6 +210,7 @@ const allLanguagesImp = (f, zz) =>
   Array.from(zz.reduce(accumulator.bind(null, f), new Map()))
     .sort(sorter)
     .reverse()
+    .map(([name, count]) => ({ name, count }))
 
 const process = data => {
   const i2 = data && data.search && data.search.edges.map(({ node }) => node)
