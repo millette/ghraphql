@@ -1,5 +1,7 @@
 'use strict'
 
+const norm = require('normalize-email-or-url')
+
 const sorter = (a, b) => {
   if (a[1] > b[1]) {
     return 1
@@ -165,35 +167,54 @@ const slim = x => {
     if (!x[r]) {
       continue
     }
-    if (r === 'name') {
-      if (x.name !== x.login) {
-        ret.name = x.name
-      }
-    } else if (r === 'starredRepositories') {
-      if (!x.starredRepositories.edges || !x.starredRepositories.edges.length) {
-        continue
-      }
-      stars = fixStars(x.starredRepositories.edges)
-      if (stars) {
-        ret.starredRepositories = stars
-      }
-    } else if (r === 'repositoriesContributedTo') {
-      if (
-        !x.repositoriesContributedTo.edges ||
-        !x.repositoriesContributedTo.edges.length
-      ) {
-        continue
-      }
-      if (x.repositoriesContributedTo.totalCount) {
-        ret.repositoriesContributedToCount =
-          x.repositoriesContributedTo.totalCount
-      }
-      repos = fixRepos(x.repositoriesContributedTo.edges)
-      if (repos) {
-        ret.repositoriesContributedTo = repos
-      }
-    } else {
-      ret[r] = x[r]
+
+    switch (r) {
+      case 'name':
+        if (x.name !== x.login) {
+          ret.name = x.name
+        }
+        break
+
+      case 'starredRepositories':
+        if (
+          !x.starredRepositories.edges ||
+          !x.starredRepositories.edges.length
+        ) {
+          continue
+        }
+        stars = fixStars(x.starredRepositories.edges)
+        if (stars) {
+          ret.starredRepositories = stars
+        }
+        break
+
+      case 'repositoriesContributedTo':
+        if (
+          !x.repositoriesContributedTo.edges ||
+          !x.repositoriesContributedTo.edges.length
+        ) {
+          continue
+        }
+        if (x.repositoriesContributedTo.totalCount) {
+          ret.repositoriesContributedToCount =
+            x.repositoriesContributedTo.totalCount
+        }
+        repos = fixRepos(x.repositoriesContributedTo.edges)
+        if (repos) {
+          ret.repositoriesContributedTo = repos
+        }
+        break
+
+      case 'websiteUrl':
+        ret.websiteUrl = norm(x.websiteUrl).url
+        break
+
+      case 'email':
+        ret.email = norm(x.email).email
+        break
+
+      default:
+        ret[r] = x[r]
     }
   }
   return addLanguages(ret)
