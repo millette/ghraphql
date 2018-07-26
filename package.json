@@ -33,6 +33,7 @@
     "marked": "^0.4.0",
     "marked-terminal": "^3.0.0",
     "meow": "^5.0.0",
+    "normalize-email-or-url": "^0.1.0",
     "p-retry": "^2.0.0",
     "progress": "^2.0.0"
   },

@@ -1922,6 +1922,17 @@ nopt@~3.0.6:
   dependencies:
     abbrev "1"
 
+normalize-email-or-url@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/normalize-email-or-url/-/normalize-email-or-url-0.1.0.tgz#ac2de3c353ccba5cea9100f0f5c44414a40063da"
+  dependencies:
+    normalize-email "^1.1.1"
+    normalize-url "^3.2.0"
+
+normalize-email@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/normalize-email/-/normalize-email-1.1.1.tgz#7f7e495950b67be3ecc788ba72ef7df951e9f32e"
+
 normalize-package-data@^2.3.2, normalize-package-data@^2.3.4:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/normalize-package-data/-/normalize-package-data-2.4.0.tgz#12f95a307d58352075a04907b84ac8be98ac012f"
@@ -1942,6 +1953,10 @@ normalize-url@2.0.1:
     prepend-http "^2.0.0"
     query-string "^5.0.1"
     sort-keys "^2.0.0"
+
+normalize-url@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-3.2.0.tgz#98d0948afc82829f374320f405fe9ca55a5f8567"
 
 npm-path@^2.0.2:
   version "2.0.4"
