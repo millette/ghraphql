@@ -26,6 +26,7 @@
   "dependencies": {
     "debug": "^3.1.0",
     "delay": "^3.0.0",
+    "get-best-contrast-color": "^0.2.1",
     "got": "^8.3.2",
     "lodash.deburr": "^4.1.0",
     "lodash.uniq": "^4.5.0",
