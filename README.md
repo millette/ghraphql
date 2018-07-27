@@ -72,6 +72,7 @@ $ ghraphql <location> [<location> ...]
 --before            -b  Before date, 2018-06-21 or 2018-07-21T10:40:40Z
 --pretty            -p  Pretty output
 --output            -o  Output to file
+--colors            -c  Fetch GitHub language colors
 --last-starred      -s  Include these last starred repositories (50)
 --last-repos        -r  Include these last repositories contributed to (50)
 --last-stargazers   -g  Include these last stargazers (50)
@@ -80,12 +81,15 @@ $ ghraphql <location> [<location> ...]
 
 ## Examples
 
-```
+```sh
 $ ghraphql Montréal
 // searches for montreal and montréal
 
 $ ghraphql Montréal "saint jean"
 // searches for montreal, montréal and "saint jean"
+
+$ ghraphql --colors --pretty
+// outputs a JSON of the GitHub language colors
 ```
 
 ## Features

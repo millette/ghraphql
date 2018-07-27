@@ -19,6 +19,7 @@ const uniq = require('lodash.uniq')
 const uniqBy = require('lodash.uniqby')
 const delay = require('delay')
 const debug = require('debug')(name)
+const bestContrast = require('get-best-contrast-color').default
 
 const MIN_WAIT = 2000
 
@@ -56,6 +57,22 @@ const RETRY_OPTS = {
 }
 
 const localFile = path => readFileSync(join(__dirname, path), 'utf-8')
+
+const githubColors = (foregrounds = ['#000', '#fff']) =>
+  // see https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
+  got(
+    'https://raw.githubusercontent.com/jaebradley/github-languages-client/master/src/languages.json',
+    { json: true }
+  ).then(({ body }) =>
+    body
+      .map(({ name, color }) => ({ name, color }))
+      .filter(({ color }) => color)
+      .map(({ name, color }) => ({
+        name,
+        bg: color.toLowerCase(),
+        fg: bestContrast(color, foregrounds)
+      }))
+  )
 
 const deburred = where => {
   if (!process.env.GITHUB_TOKEN) {
@@ -299,3 +316,4 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
 module.exports = graphqlGot
 module.exports.deburred = deburred
 module.exports.localFile = localFile
+module.exports.githubColors = githubColors

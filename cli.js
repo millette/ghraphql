@@ -14,7 +14,7 @@ const ProgressBar = require('progress')
 
 // self
 const graphqlGot = require('.')
-const { localFile, deburred } = require('.')
+const { githubColors, localFile, deburred } = graphqlGot
 const { name } = require('./package.json')
 
 const BAR_THROTTLE = 300
@@ -50,6 +50,18 @@ const run = async cli => {
     if (cli.flags.readme) {
       return console.log(readme)
     }
+
+    if (cli.flags.colors) {
+      return githubColors().then(json => {
+        const output = JSON.stringify(json, null, cli.flags.pretty ? '  ' : '')
+        if (cli.flags.output) {
+          writeFileSync(normalizePath(cli.flags.output, '.json'), output)
+        } else {
+          console.log(output)
+        }
+      })
+    }
+
     if (!cli.input.length) {
       throw new Error(`
   Missing required location argument.
@@ -181,6 +193,7 @@ run(
     --verbose           -v  Verbose mode
     --pretty            -p  Pretty output
     --output            -o  Output to file
+    --colors            -c  Fetch GitHub language colors
     --before            -b  Before date, 2018-06-21 or 2018-07-21T10:40:40Z
     --last-starred      -s  Include these last starred repositories (50)
     --last-repos        -r  Include these last repositories contributed to (50)
@@ -234,6 +247,10 @@ run(
         pretty: {
           type: 'boolean',
           alias: 'p'
+        },
+        colors: {
+          type: 'boolean',
+          alias: 'c'
         }
       }
     }
