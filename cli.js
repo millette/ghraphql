@@ -52,14 +52,20 @@ const run = async cli => {
     }
 
     if (cli.flags.colors) {
-      return githubColors().then(json => {
-        const output = JSON.stringify(json, null, cli.flags.pretty ? '  ' : '')
-        if (cli.flags.output) {
-          writeFileSync(normalizePath(cli.flags.output, '.json'), output)
-        } else {
-          console.log(output)
-        }
-      })
+      return githubColors()
+        .then(json => {
+          const output = JSON.stringify(
+            json,
+            null,
+            cli.flags.pretty ? '  ' : ''
+          )
+          if (cli.flags.output) {
+            writeFileSync(normalizePath(cli.flags.output, '.json'), output)
+          } else {
+            console.log(output)
+          }
+        })
+        .catch(console.error)
     }
 
     if (!cli.input.length) {
