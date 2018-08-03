@@ -182,6 +182,9 @@ const slim = x => {
         ) {
           continue
         }
+        if (x.starredRepositories.totalCount) {
+          ret.starredRepositoriesCount = x.starredRepositories.totalCount
+        }
         stars = fixStars(x.starredRepositories.edges)
         if (stars) {
           ret.starredRepositories = stars
