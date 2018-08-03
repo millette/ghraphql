@@ -185,6 +185,9 @@ const run = async cli => {
     clearInterval(timing)
     clearInterval(estimator)
     console.error(e.errors ? e : e.toString())
+    if (e.headers) {
+      console.error('headers:', e.headers)
+    }
   }
 }
 

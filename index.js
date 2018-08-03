@@ -155,15 +155,13 @@ const graphqlGotImp = async (where, query, variables = {}) => {
 
     debug('variables:', variables)
 
-    const { headers: { date }, body: { data, errors } } = await gotRetry(
-      query,
-      variables
-    )
-    const fetchedAt = new Date(date).toISOString()
+    const { headers, body: { data, errors } } = await gotRetry(query, variables)
+    const fetchedAt = new Date(headers.date).toISOString()
 
     if (errors) {
       const err = new Error(`GraphQL: ${errors[0].message}`)
       err.errors = JSON.stringify(errors)
+      err.headers = headers
       if (data) {
         err.data = JSON.stringify(data)
       }
@@ -295,6 +293,9 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
     return processor(data)
   } catch (e) {
     // FIXME: Get stuck on 502 errors
+    if (e.headers) {
+      console.error('HEADERS:', e.headers)
+    }
     debug('FIXME (statusCode) ?', e.statusCode)
     debug('lastCreated:', lastCreated)
     debug(e)

@@ -177,6 +177,7 @@ const slim = x => {
 
       case 'starredRepositories':
         if (
+          !x.starredRepositories ||
           !x.starredRepositories.edges ||
           !x.starredRepositories.edges.length
         ) {
