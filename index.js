@@ -293,9 +293,6 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
     return processor(data)
   } catch (e) {
     // FIXME: Get stuck on 502 errors
-    if (e.headers) {
-      console.error('HEADERS:', e.headers)
-    }
     debug('FIXME (statusCode) ?', e.statusCode)
     debug('lastCreated:', lastCreated)
     debug(e)
