@@ -21,7 +21,7 @@ const delay = require('delay')
 const debug = require('debug')(name)
 const bestContrast = require('get-best-contrast-color').default
 
-const MIN_WAIT = 2000
+const MIN_WAIT = 50
 
 const GOT_OPTS = {
   retries: 0,
@@ -35,10 +35,14 @@ const GOT_OPTS = {
 const WHERE_ERROR = '"where" argument should be a string or an array.'
 
 let tickerWarn = () => false
-
+// f  1    2   3   4     5   6    7
+// 4  15s, 1m, 4m, 16m, 64m
+// 3  7,   20, 1m, 3m,   9m, 27m, 81m
 const RETRY_OPTS = {
-  retries: 5,
-  minTimeout: 10000,
+  retries: 8,
+  factor: 3,
+  minTimeout: 20000,
+  maxTimeout: 65 * 60 * 1000,
   onFailedAttempt: error => {
     tickerWarn(`${new Date().toISOString()} ${error.toString()}`)
     tickerWarn(
@@ -172,7 +176,7 @@ const graphqlGotImp = async (where, query, variables = {}) => {
     }
 
     data.search.edges =
-      data.search.edges && data.search.edges.length
+      data.search && data.search.edges && data.search.edges.length
         ? data.search.edges.map(x => {
           return {
             node: {
@@ -207,9 +211,9 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
   let ms
 
   if (rateLimit.cost > remaining) {
-    ms = timeUntilReset + 2 * MIN_WAIT
+    ms = timeUntilReset + 20 * MIN_WAIT
   } else if (timeNeeded > timeUntilReset && costNeeded > remaining) {
-    ms = Math.max(MIN_WAIT, Math.round(0.75 * (ttt - Math.round(elapsed))))
+    ms = Math.max(MIN_WAIT, Math.round(1.25 * (ttt - Math.round(elapsed))))
   } else {
     ms = MIN_WAIT
   }
@@ -245,7 +249,7 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
       const then = Date.now()
       data = await graphqlGotImp(where, query, { ...variables, after, created })
 
-      if (data.search.edges.length) {
+      if (data.search && data.search.edges && data.search.edges.length) {
         lastCreated =
           data.search.edges[data.search.edges.length - 1].node.createdAt
       }
@@ -297,6 +301,7 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
     debug('lastCreated:', lastCreated)
     debug(e)
     if (
+      result &&
       result.length &&
       data &&
       data.search &&

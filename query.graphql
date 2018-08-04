@@ -12,7 +12,7 @@ query ElUsers(
     remaining
     resetAt
   }
-  search(after: $after, first: 25, type: USER, query: $loc) {
+  search(after: $after, first: 12, type: USER, query: $loc) {
     userCount
     pageInfo {
       endCursor
