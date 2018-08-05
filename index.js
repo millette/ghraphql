@@ -1,8 +1,5 @@
 'use strict'
 
-// FIXME: check rate limits before retrying
-// see error.headers
-
 // core
 const { readFileSync } = require('fs')
 const { join } = require('path')
@@ -20,10 +17,7 @@ const delay = require('delay')
 const debug = require('debug')(name)
 const bestContrast = require('get-best-contrast-color').default
 
-// const MIN_WAIT = 50
-
 const GOT_OPTS = {
-  // default: throwHttpErrors: true, // current run: false (by mistake I believe)
   retry: {
     retries: 5,
     methods: ['POST'],
@@ -179,7 +173,6 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
   let ms
 
   if (!remaining || rateLimit.cost > remaining) {
-    // ms = timeUntilReset + 20 * MIN_WAIT
     ms = timeUntilReset + 30 * 1000
   } else {
     const ttt = Math.round(
@@ -194,15 +187,6 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
     }
   }
 
-  /*
-  } else if (timeNeeded > timeUntilReset && costNeeded > remaining) {
-    // ms = Math.max(MIN_WAIT, Math.round(1.25 * (ttt - Math.round(elapsed))))
-    // ms = Math.max(1000, Math.round(1.25 * (ttt - Math.round(elapsed))))
-    // ms = Math.max(1000, ttt)
-    // ms = ttt
-    ms = Math.max(0, Math.round(ttt - Math.round(elapsed)))
-  }
-  */
   debug('ms:', ms)
 
   if (process.env.DEBUG === name || process.env.DEBUG === '*') {
@@ -213,7 +197,6 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
   }
 }
 
-// FIXME: search before specified date
 const graphqlGot = async (where, query, variables = {}, tick = false) => {
   let r2
   let first = true
@@ -272,7 +255,6 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
           remaining: parseInt(data._headers['x-ratelimit-remaining'], 10),
           resetAt: 1000 * parseInt(data._headers['x-ratelimit-reset'], 10)
         }
-        // data.rateLimit
       )
     } while (after || created)
 
@@ -283,43 +265,9 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
     data.meta = { name, version }
     return processor(data)
   } catch (e) {
-    // FIXME: Get stuck on 502 errors
     debug('FIXME (statusCode) ?', e.statusCode)
     debug('lastCreated:', lastCreated)
     debug(e)
-
-    /*
-    if (
-      result &&
-      result.length
-    ) {
-      if (
-        data &&
-        data.search &&
-        data.search.edges &&
-        data.search.edges.length
-      ) {
-        debug(Object.keys(data))
-        data.search.edges = result
-        return data
-      }
-      // return []
-    }
-    */
-    /*
-    if (
-      result &&
-      result.length &&
-      data &&
-      data.search &&
-      data.search.edges &&
-      data.search.edges.length
-    ) {
-      debug(Object.keys(data))
-      data.search.edges = result
-      return data
-    }
-    */
     throw e
   }
 }
