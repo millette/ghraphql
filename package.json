@@ -19,6 +19,7 @@
     "*.{js,json,md,graphql}": ["prettier-standard", "git add"]
   },
   "scripts": {
+    "deps": "dependency-check . && dependency-check . --unused --no-dev",
     "lint": "standard",
     "format": "prettier-standard '**/*.+(js|json|md|graphql)'",
     "precommit": "lint-staged"
@@ -27,7 +28,7 @@
     "debug": "^3.1.0",
     "delay": "^3.0.0",
     "get-best-contrast-color": "^0.2.1",
-    "got": "^8.3.2",
+    "got": "^9.0.0",
     "lodash.deburr": "^4.1.0",
     "lodash.uniq": "^4.5.0",
     "lodash.uniqby": "^4.7.0",
@@ -35,10 +36,10 @@
     "marked-terminal": "^3.0.0",
     "meow": "^5.0.0",
     "normalize-email-or-url": "^0.1.0",
-    "p-retry": "^2.0.0",
     "progress": "^2.0.0"
   },
   "devDependencies": {
+    "dependency-check": "^3.2.0",
     "husky": "^0.14.3",
     "lint-staged": "^7.2.0",
     "prettier-standard": "^8.0.1",
