@@ -19,7 +19,7 @@ const bestContrast = require('get-best-contrast-color').default
 
 const GOT_OPTS = {
   retry: {
-    retries: 5,
+    retries: 6,
     methods: ['POST'],
     statusCodes: [403, 408, 413, 429, 502, 503, 504]
   },
@@ -104,9 +104,11 @@ const graphqlGotImp = async (where, query, variables = {}) => {
       variables.lastStargazers = 50
     }
 
+    /*
     if (!variables.lastStarred) {
       variables.lastStarred = 50
     }
+    */
 
     if (!variables.lastRepos) {
       variables.lastRepos = 50

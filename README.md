@@ -73,9 +73,7 @@ $ ghraphql <location> [<location> ...]
 --pretty            -p  Pretty output
 --output            -o  Output to file
 --colors            -c  Fetch GitHub language colors
---last-starred      -s  Include these last starred repositories (50)
 --last-repos        -r  Include these last repositories contributed to (50)
---last-stargazers   -g  Include these last stargazers (50)
 --query             -q  Query to run
 ```
 

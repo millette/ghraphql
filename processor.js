@@ -13,6 +13,7 @@ const sorter = (a, b) => {
 }
 
 const allUserLanguages = z => {
+  /*
   const starLanguages = new Map()
   if (z.starredRepositories) {
     z.starredRepositories.forEach(x => {
@@ -24,6 +25,7 @@ const allUserLanguages = z => {
       }
     })
   }
+  */
 
   const repoLanguages = new Map()
   if (z.repositoriesContributedTo) {
@@ -37,7 +39,8 @@ const allUserLanguages = z => {
     })
   }
 
-  if (!repoLanguages.size && !starLanguages.size) {
+  // if (!repoLanguages.size && !starLanguages.size) {
+  if (!repoLanguages.size) {
     return
   }
   const ret = {}
@@ -49,12 +52,14 @@ const allUserLanguages = z => {
       .map(([name, count]) => ({ name, count }))
   }
 
+  /*
   if (starLanguages.size) {
     ret.starLanguages = Array.from(starLanguages)
       .sort(sorter)
       .reverse()
       .map(([name, count]) => ({ name, count }))
   }
+  */
 
   return ret
 }
@@ -68,12 +73,15 @@ const addLanguages = x => {
     x.repoLanguages = la.repoLanguages
   }
 
+  /*
   if (la.starLanguages) {
     x.starLanguages = la.starLanguages
   }
+  */
   return x
 }
 
+/*
 const fixStars = z => {
   if (!z || !z.length) {
     return
@@ -94,30 +102,7 @@ const fixStars = z => {
     return all
   }
 }
-
-const fixStargazers = z => {
-  if (!z || !z.length) {
-    return
-  }
-  const all = z.filter(x => x && x.node).map(x => {
-    const ret = {
-      starredAt: x.starredAt,
-      createdAt: x.node.createdAt,
-      login: x.node.login,
-      databaseId: x.node.databaseId
-    }
-
-    if (x.node.location) {
-      ret.location = x.node.location
-    }
-
-    return ret
-  })
-
-  if (all.length) {
-    return all
-  }
-}
+*/
 
 const fixRepos = z => {
   if (!z || !z.length) {
@@ -136,18 +121,6 @@ const fixRepos = z => {
       }
       if (x.primaryLanguage && x.primaryLanguage.name) {
         ret.primaryLanguage = x.primaryLanguage.name
-      }
-
-      if (x.stargazers) {
-        if (x.stargazers.totalCount) {
-          ret.stargazersCount = x.stargazers.totalCount
-        }
-        if (x.stargazers.edges && x.stargazers.edges.length) {
-          const gazers = fixStargazers(x.stargazers.edges)
-          if (gazers) {
-            ret.stargazers = gazers
-          }
-        }
       }
 
       return ret
@@ -186,10 +159,12 @@ const slim = x => {
         if (x.starredRepositories.totalCount) {
           ret.starredRepositoriesCount = x.starredRepositories.totalCount
         }
+        /*
         stars = fixStars(x.starredRepositories.edges)
         if (stars) {
           ret.starredRepositories = stars
         }
+        */
         break
 
       case 'repositoriesContributedTo':
@@ -245,13 +220,13 @@ const process = data => {
   }
   const users = i2.map(slim)
   const repoLanguages = allLanguagesImp('repoLanguages', users)
-  const starLanguages = allLanguagesImp('starLanguages', users)
+  // const starLanguages = allLanguagesImp('starLanguages', users)
   data.meta.processedAt = new Date().toISOString()
   return {
     meta: data.meta,
     users,
-    repoLanguages,
-    starLanguages
+    repoLanguages
+    // starLanguages
   }
 }
 

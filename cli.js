@@ -78,9 +78,8 @@ const run = async cli => {
 
     const variables = {
       created: cli.flags.before,
-      lastStarred: parseInt(cli.flags.lastStarred, 10),
-      lastRepos: parseInt(cli.flags.lastRepos, 10),
-      lastStargazers: parseInt(cli.flags.lastStargazers, 10)
+      // lastStarred: parseInt(cli.flags.lastStarred, 10),
+      lastRepos: parseInt(cli.flags.lastRepos, 10)
     }
 
     if (cli.flags.verbose) {
@@ -204,9 +203,7 @@ run(
     --output            -o  Output to file
     --colors            -c  Fetch GitHub language colors
     --before            -b  Before date, 2018-06-21 or 2018-07-21T10:40:40Z
-    --last-starred      -s  Include these last starred repositories (50)
     --last-repos        -r  Include these last repositories contributed to (50)
-    --last-stargazers   -g  Include these last stargazers (50)
     --query             -q  Query to run
 
   Examples
@@ -226,17 +223,9 @@ run(
           type: 'string',
           alias: 'b'
         },
-        'last-starred': {
-          type: 'string',
-          alias: 's'
-        },
         'last-repos': {
           type: 'string',
           alias: 'r'
-        },
-        'last-stargazers': {
-          type: 'string',
-          alias: 'g'
         },
         query: {
           type: 'string',
