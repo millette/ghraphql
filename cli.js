@@ -18,6 +18,7 @@ const delay = require('delay')
 const graphqlGot = require('.')
 const { githubColors, localFile, deburred } = graphqlGot
 const { name } = require('./package.json')
+const sparks = require('./lib/sparks')
 
 const BAR_THROTTLE = 300
 
@@ -59,29 +60,47 @@ const run = async cli => {
       return console.log(readme)
     }
 
+    if (cli.flags.sparks) {
+      if (!cli.flags.config) {
+        throw new Error(
+          'When using the --sparks flag, the --config flag is required.'
+        )
+      }
+
+      const dir = dirname(cli.flags.config)
+
+      const ghDataFn = normalizePath(resolve(dir, 'data/gh-users.json'))
+
+      const json = await sparks(ghDataFn)
+
+      const output = JSON.stringify(json, null, cli.flags.pretty ? '  ' : '')
+
+      if (!cli.flags.output) {
+        cli.flags.output = resolve(dir, 'data/sparks.json')
+      }
+
+      write(output, '.json')
+      return
+    }
+
     if (cli.flags.colors) {
-      return githubColors()
-        .then(json => {
-          const output = JSON.stringify(
-            json,
-            null,
-            cli.flags.pretty ? '  ' : ''
-          )
+      const json = await githubColors()
+      const output = JSON.stringify(json, null, cli.flags.pretty ? '  ' : '')
 
-          if (!cli.flags.output && cli.flags.config) {
-            cli.flags.output = resolve(
-              dirname(cli.flags.config),
-              'data/language-colors.json'
-            )
-          }
+      if (!cli.flags.output && cli.flags.config) {
+        cli.flags.output = resolve(
+          dirname(cli.flags.config),
+          'data/language-colors.json'
+        )
+      }
 
-          if (cli.flags.output) {
-            write(output, '.json')
-          } else {
-            console.log(output)
-          }
-        })
-        .catch(console.error)
+      if (cli.flags.output) {
+        write(output, '.json')
+      } else {
+        console.log(output)
+      }
+
+      return
     }
 
     if (cli.flags.config) {
@@ -245,6 +264,7 @@ run(
     --config                Specify config file
     --pretty            -p  Pretty output
     --output            -o  Output to file
+    --sparks            -s  Fetch contributions and generate week-based sparkline data
     --colors            -c  Fetch GitHub language colors
     --before            -b  Before date, 2018-06-21 or 2018-07-21T10:40:40Z
     --last-repos        -r  Include these last repositories contributed to (50)
@@ -292,6 +312,10 @@ run(
         pretty: {
           type: 'boolean',
           alias: 'p'
+        },
+        sparks: {
+          type: 'boolean',
+          alias: 's'
         },
         colors: {
           type: 'boolean',

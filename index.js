@@ -6,7 +6,7 @@ const { join } = require('path')
 
 // self
 const { name, version } = require('./package.json')
-const processor = require('./processor')
+const processor = require('./lib/processor')
 
 // npm
 const got = require('got')

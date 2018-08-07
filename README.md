@@ -73,6 +73,7 @@ $ ghraphql <location> [<location> ...]
 --before            -b  Before date, 2018-06-21 or 2018-07-21T10:40:40Z
 --pretty            -p  Pretty output
 --output            -o  Output to file
+--sparks            -s  Fetch contributions and generate week-based sparkline data
 --colors            -c  Fetch GitHub language colors
 --last-repos        -r  Include these last repositories contributed to (50)
 --query             -q  Query to run
