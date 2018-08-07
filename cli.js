@@ -249,6 +249,7 @@ const run = async cli => {
     if (e.headers) {
       console.error('headers:', e.headers)
     }
+    process.exitCode = e.statusCodes || 127
   }
 }
 
