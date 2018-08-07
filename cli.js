@@ -4,7 +4,7 @@
 
 // core
 const { readFileSync, writeFileSync } = require('fs')
-const { resolve, dirname, basename, format } = require('path')
+const { parse, resolve, dirname, basename, format } = require('path')
 
 // npm
 const meow = require('meow')
@@ -12,6 +12,7 @@ const marked = require('marked')
 const TerminalRenderer = require('marked-terminal')
 const ProgressBar = require('progress')
 const mkdirp = require('mkdirp').sync
+const delay = require('delay')
 
 // self
 const graphqlGot = require('.')
@@ -67,7 +68,6 @@ const run = async cli => {
             cli.flags.pretty ? '  ' : ''
           )
 
-          console.error('COLORS!')
           if (!cli.flags.output && cli.flags.config) {
             cli.flags.output = resolve(
               dirname(cli.flags.config),
@@ -82,6 +82,21 @@ const run = async cli => {
           }
         })
         .catch(console.error)
+    }
+
+    if (cli.flags.config) {
+      const { locationSearch } = require(normalizePath(cli.flags.config))
+      if (locationSearch) {
+        if (cli.input.length) {
+          console.error('Ignoring command-line locations', cli.input)
+          console.log('Using config.js locationSearch field instead.')
+        }
+        if (typeof locationSearch === 'string') {
+          cli.input = [locationSearch]
+        } else {
+          cli.input = locationSearch
+        }
+      }
     }
 
     if (!cli.input.length) {
@@ -112,7 +127,7 @@ const run = async cli => {
       cli.flags.verbose &&
       ((n, { total, warn } = {}) => {
         if (total) {
-          console.error('Number of results:', total)
+          console.error('Expected results:', total)
         }
 
         if (total && !bar) {
@@ -180,25 +195,38 @@ const run = async cli => {
       tick
     )
 
-    clearInterval(timing)
     clearInterval(estimator)
+    clearInterval(timing)
 
+    const output = JSON.stringify(body, null, cli.flags.pretty ? '  ' : '')
+
+    if (!cli.flags.output && cli.flags.config) {
+      cli.flags.output = resolve(
+        dirname(cli.flags.config),
+        'data/gh-users.json'
+      )
+    }
+
+    if (cli.flags.output) {
+      write(output, '.json')
+    }
+
+    await delay(500)
     if (cli.flags.verbose) {
-      console.error('Results found:', body.users.length)
+      console.error('\n\nResults found:', body.users.length)
       if (body.users.length) {
         console.error('Last date:', body.users[body.users.length - 1].createdAt)
       }
     }
-    const output = JSON.stringify(body, null, cli.flags.pretty ? '  ' : '')
-    if (cli.flags.output) {
-      writeFileSync(normalizePath(cli.flags.output, '.json'), output)
-    } else {
+
+    if (!cli.flags.output) {
       console.log(output)
     }
   } catch (e) {
-    clearInterval(timing)
     clearInterval(estimator)
-    console.error(e.errors ? e : e.toString())
+    clearInterval(timing)
+    await delay(500)
+    console.error('\n\n', e.errors ? e : e.toString())
     if (e.headers) {
       console.error('headers:', e.headers)
     }
