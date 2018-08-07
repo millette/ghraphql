@@ -96,12 +96,6 @@ $ ghraphql --colors --pretty
 * Automatically search for "montreal" too when given "montréal"
 * JSON output
 
-## Coming features
-
-* [All the issues](https://github.com/millette/ghraphql/issues)
-* Paging (over 100 results while respectings quotas [issues#1](https://github.com/millette/ghraphql/issues/1)
-* Determine all required fields [issues#2](https://github.com/millette/ghraphql/issues/2)
-
 ## GraphQL
 
 See [GitHub's GraphQL explorer](https://developer.github.com/v4/explorer/) to get an idea of the data available.
