@@ -69,6 +69,7 @@ $ ghraphql <location> [<location> ...]
 ```
 --readme                Show readme
 --verbose           -v  Verbose mode
+--config                Specify config file
 --before            -b  Before date, 2018-06-21 or 2018-07-21T10:40:40Z
 --pretty            -p  Pretty output
 --output            -o  Output to file

@@ -11,6 +11,7 @@ const meow = require('meow')
 const marked = require('marked')
 const TerminalRenderer = require('marked-terminal')
 const ProgressBar = require('progress')
+const mkdirp = require('mkdirp').sync
 
 // self
 const graphqlGot = require('.')
@@ -40,6 +41,12 @@ const run = async cli => {
 
   const startTime = Date.now()
 
+  const write = (content, ext) => {
+    const fn = normalizePath(cli.flags.output, ext)
+    mkdirp(dirname(fn))
+    writeFileSync(fn, content)
+  }
+
   // FIXME: use last 5, 10 and 15 minutes
   // to measure average durations
   const makeApprox = bar =>
@@ -59,8 +66,17 @@ const run = async cli => {
             null,
             cli.flags.pretty ? '  ' : ''
           )
+
+          console.error('COLORS!')
+          if (!cli.flags.output && cli.flags.config) {
+            cli.flags.output = resolve(
+              dirname(cli.flags.config),
+              'data/language-colors.json'
+            )
+          }
+
           if (cli.flags.output) {
-            writeFileSync(normalizePath(cli.flags.output, '.json'), output)
+            write(output, '.json')
           } else {
             console.log(output)
           }
@@ -78,7 +94,6 @@ const run = async cli => {
 
     const variables = {
       created: cli.flags.before,
-      // lastStarred: parseInt(cli.flags.lastStarred, 10),
       lastRepos: parseInt(cli.flags.lastRepos, 10)
     }
 
@@ -199,6 +214,7 @@ run(
   Options
     --readme                Show readme
     --verbose           -v  Verbose mode
+    --config                Specify config file
     --pretty            -p  Pretty output
     --output            -o  Output to file
     --colors            -c  Fetch GitHub language colors
@@ -218,6 +234,9 @@ run(
         output: {
           type: 'string',
           alias: 'o'
+        },
+        config: {
+          type: 'string'
         },
         before: {
           type: 'string',
