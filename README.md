@@ -58,6 +58,8 @@ Better to set it up properly in your `.bashrc` file or equivalent. You should no
 
 ## Install
 
+Note that you don't need to install this separately if you're using the related [gatsby starter](https://github.com/millette/gatsby-starter-location-github) since it will be installed automatically as a dependency.
+
 ```
 $ npm install -g ghraphql
 ```
