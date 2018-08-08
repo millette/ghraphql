@@ -16,6 +16,8 @@ Search GitHub for users by location.
 * [Features](#features)
 * [Coming features](#coming-features)
 * [GraphQL](#graphql)
+* [See also](#see-also)
+* [License](#license)
 
 ## Thank you!
 
@@ -108,3 +110,11 @@ $ ghraphql --colors --pretty
 See [GitHub's GraphQL explorer](https://developer.github.com/v4/explorer/) to get an idea of the data available.
 
 Use CTRL-SPACE to trigger autocompletion and discover supported fields and types.
+
+## See also
+
+Mostly useful with [gatsby-starter-location-github](https://github.com/millette/gatsby-starter-location-github).
+
+## License
+
+AGPL-v3 2018 © [Robin Millette](http://robin.millette.info)
