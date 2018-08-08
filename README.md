@@ -19,7 +19,7 @@ Search GitHub for users by location.
 
 ## Thank you!
 
-A big thank you to @marclaporte of [WikiSuite](https://wikisuite.org/) for their financial support of the RoLLodeQc relaunch. It would never have happened without their support.
+A big thank you to [WikiSuite](https://wikisuite.org/) (and Marc Laporte) for their financial support of the RoLLodeQc relaunch. It would never have happened without them!
 
 ## Requirements
 
