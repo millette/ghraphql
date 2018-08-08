@@ -4,6 +4,7 @@ Search GitHub for users by location.
 
 # TOC
 
+* [Thank you!](#thank-you)
 * [Requirements](#requirements)
   * [GNU/Linux / Unix-like OS](#gnulinux--unix-like-os)
   * [Node.js](#node-js)
@@ -15,6 +16,10 @@ Search GitHub for users by location.
 * [Features](#features)
 * [Coming features](#coming-features)
 * [GraphQL](#graphql)
+
+## Thank you!
+
+A big thank you to @marclaporte of [WikiSuite](https://wikisuite.org/) for their financial support of the RoLLodeQc relaunch. It would never have happened without their support.
 
 ## Requirements
 
