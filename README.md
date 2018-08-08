@@ -14,7 +14,6 @@ Search GitHub for users by location.
 * [Options](#options)
 * [Examples](#examples)
 * [Features](#features)
-* [Coming features](#coming-features)
 * [GraphQL](#graphql)
 * [See also](#see-also)
 * [License](#license)
