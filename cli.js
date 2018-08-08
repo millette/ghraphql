@@ -4,7 +4,7 @@
 
 // core
 const { readFileSync, writeFileSync } = require('fs')
-const { parse, resolve, dirname, basename, format } = require('path')
+const { resolve, dirname, basename, format } = require('path')
 
 // npm
 const meow = require('meow')
