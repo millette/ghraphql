@@ -37,6 +37,10 @@ query ElUsers($loc: String!, $lastRepos: Int!, $after: String) {
             totalCount
             edges {
               node {
+                licenseInfo {
+                  spdxId
+                }
+
                 forkCount
                 primaryLanguage {
                   name
