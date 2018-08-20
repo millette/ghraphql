@@ -42,6 +42,12 @@ query ElUsers($loc: String!, $lastRepos: Int!, $after: String) {
                 }
                 description
                 forkCount
+                stargazers {
+                  totalCount
+                }
+                watchers {
+                  totalCount
+                }
                 primaryLanguage {
                   name
                 }
