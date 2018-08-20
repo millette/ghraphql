@@ -40,7 +40,7 @@ query ElUsers($loc: String!, $lastRepos: Int!, $after: String) {
                 licenseInfo {
                   spdxId
                 }
-
+                description
                 forkCount
                 primaryLanguage {
                   name
