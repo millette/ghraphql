@@ -27,12 +27,17 @@
   "dependencies": {
     "debug": "^3.1.0",
     "delay": "^3.0.0",
+    "franc-min": "^4.0.0",
     "get-best-contrast-color": "^0.2.1",
     "got": "^9.0.0",
+    "lodash.countby": "^4.6.0",
     "lodash.deburr": "^4.1.0",
+    "lodash.difference": "^4.5.0",
     "lodash.groupby": "^4.6.0",
+    "lodash.sortby": "^4.7.0",
     "lodash.uniq": "^4.5.0",
     "lodash.uniqby": "^4.7.0",
+    "lodash.words": "^4.2.0",
     "marked": "^0.5.0",
     "marked-terminal": "^3.0.0",
     "meow": "^5.0.0",
@@ -41,6 +46,7 @@
     "p-map": "^1.2.0",
     "progress": "^2.0.0",
     "rollodeqc-gh-user-streak": "^2.1.1",
+    "stopwords": "^0.0.9",
     "weeknumber": "^1.0.1"
   },
   "devDependencies": {
