@@ -12,7 +12,7 @@
     "url": "http://robin.millette.info"
   },
   "engines": {
-    "node": ">= 8.11.3"
+    "node": ">= 8.11.4"
   },
   "keywords": ["github", "graphql", "users", "location", "cli"],
   "lint-staged": {
