@@ -2057,9 +2057,9 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-marked-terminal@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/marked-terminal/-/marked-terminal-3.1.0.tgz#77656982a3dbf476d2799e7d67ee9d116a7b1f94"
+marked-terminal@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/marked-terminal/-/marked-terminal-3.1.1.tgz#1e726816ddc4552a83393228ff0952b6cd4e5e04"
   dependencies:
     cardinal "^2.1.1"
     chalk "^2.4.1"
