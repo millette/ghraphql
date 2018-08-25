@@ -68,11 +68,8 @@ const run = async cli => {
       }
 
       const dir = dirname(cli.flags.config)
-
       const ghDataFn = normalizePath(resolve(dir, 'data/gh-users.json'))
-
-      const json = await sparks(ghDataFn)
-
+      const json = await sparks(ghDataFn, cli.flags.verbose && ProgressBar)
       const output = JSON.stringify(json, null, cli.flags.pretty ? '  ' : '')
 
       if (!cli.flags.output) {
