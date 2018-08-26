@@ -1319,20 +1319,6 @@ got@^6.7.1:
     unzip-response "^2.0.1"
     url-parse-lax "^1.0.0"
 
-got@^9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/got/-/got-9.0.0.tgz#8673d2838adbac8a2e4a07e5772e238c701e9b7c"
-  dependencies:
-    "@sindresorhus/is" "^0.11.0"
-    cacheable-request "^4.0.1"
-    decompress-response "^3.3.0"
-    duplexer3 "^0.1.4"
-    get-stream "^3.0.0"
-    mimic-response "^1.0.0"
-    p-cancelable "^0.5.0"
-    to-readable-stream "^1.0.0"
-    url-parse-lax "^3.0.0"
-
 got@^9.1.0:
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/got/-/got-9.1.0.tgz#e31aa530bf953ca51599c5722039f891e49cf2ca"
@@ -2764,12 +2750,12 @@ rimraf@^2.2.8:
   dependencies:
     glob "^7.0.5"
 
-rollodeqc-gh-user-streak@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/rollodeqc-gh-user-streak/-/rollodeqc-gh-user-streak-2.1.1.tgz#2b559d5374b0e63a6c7052461aae31db1853e077"
+rollodeqc-gh-user-streak@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/rollodeqc-gh-user-streak/-/rollodeqc-gh-user-streak-2.2.0.tgz#ea1bdc4d804587f6c1d1fd8cf7862a38566ba945"
   dependencies:
     chalk "^2.4.1"
-    got "^9.0.0"
+    got "^9.1.0"
     lodash.flatten "^4.4.0"
     lodash.sortby "^4.7.0"
     meow "^5.0.0"
