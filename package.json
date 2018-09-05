@@ -48,7 +48,7 @@
     "progress": "^2.0.0",
     "rollodeqc-gh-user-streak": "^2.2.0",
     "stopwords": "^0.0.9",
-    "weeknumber": "^1.0.1"
+    "weeknumber": "^1.1.0"
   },
   "devDependencies": {
     "dependency-check": "^3.2.0",

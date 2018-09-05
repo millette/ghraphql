@@ -3412,9 +3412,9 @@ vue-eslint-parser@^2.0.2:
     esquery "^1.0.0"
     lodash "^4.17.4"
 
-weeknumber@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/weeknumber/-/weeknumber-1.0.1.tgz#95d9247d16708e930a947c1571a156323dee3b99"
+weeknumber@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/weeknumber/-/weeknumber-1.1.0.tgz#7f38b6c479c9976af6563231202c4ffdc94382b7"
 
 which@^1.2.10, which@^1.2.9:
   version "1.3.1"
