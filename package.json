@@ -25,7 +25,7 @@
     "precommit": "lint-staged"
   },
   "dependencies": {
-    "debug": "^3.1.0",
+    "debug": "^4.0.0",
     "delay": "^4.0.1",
     "franc-min": "^4.0.0",
     "get-best-contrast-color": "^0.2.1",
@@ -51,7 +51,7 @@
     "weeknumber": "^1.1.0"
   },
   "devDependencies": {
-    "dependency-check": "^3.2.0",
+    "dependency-check": "^3.2.1",
     "husky": "^0.14.3",
     "lint-staged": "^7.2.2",
     "prettier-standard": "^8.0.1",
