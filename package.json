@@ -25,7 +25,7 @@
     "precommit": "lint-staged"
   },
   "dependencies": {
-    "debug": "^4.0.0",
+    "debug": "^4.0.1",
     "delay": "^4.0.1",
     "franc-min": "^4.0.0",
     "get-best-contrast-color": "^0.2.1",
