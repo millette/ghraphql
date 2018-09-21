@@ -203,6 +203,17 @@ const run = async cli => {
       }, 20000)
     }
 
+    if (cli.flags.repos) {
+      cli.flags.query = 'projects'
+      /*
+      const oyoy = readFileSync(normalizePath(cli.flags.query, '.graphql'), 'utf-8')
+      // console.log('query (projects):', oyoy)
+      const elelbody = await graphqlGot(cli.input, oyoy)
+      // console.log('elelbody:', JSON.stringify(elelbody, null, '  '))
+      return
+      */
+    }
+
     const body = await graphqlGot(
       cli.input,
       cli.flags.query &&
@@ -262,6 +273,7 @@ run(
     --config                Specify config file
     --pretty            -p  Pretty output
     --output            -o  Output to file
+    --repos                 Fetch repositories
     --sparks            -s  Fetch contributions and generate week-based sparkline data
     --colors            -c  Fetch GitHub language colors
     --before            -b  Before date, 2018-06-21 or 2018-07-21T10:40:40Z
@@ -310,6 +322,9 @@ run(
         pretty: {
           type: 'boolean',
           alias: 'p'
+        },
+        repos: {
+          type: 'boolean'
         },
         sparks: {
           type: 'boolean',
