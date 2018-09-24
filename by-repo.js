@@ -30,7 +30,7 @@ users.forEach(u => {
       }
       g.starsProrata =
         (g.rolloCountStars &&
-          g.stargazersCount > 9 &&
+          // g.stargazersCount > 9 &&
           g.rolloCountStars / g.stargazersCount) ||
         0
       projects.set(g.nameWithOwner, g)
@@ -52,7 +52,7 @@ users.forEach(u => {
       }
       g.contribsProrata =
         (g.rolloCountContribs &&
-          g.forkCount > 4 &&
+          // g.forkCount > 4 &&
           g.rolloCountContribs / (g.watchersCount + g.forkCount)) ||
         0
       projects.set(g.nameWithOwner, g)
@@ -72,6 +72,7 @@ const obj = {
     contribs: repos.reduce((a, b) => a + b.rolloCountContribs, 0),
     tot: repos.reduce((a, b) => a + b.rolloCountStars + b.rolloCountContribs, 0)
   },
+  repos,
   contribs: sortBy(repos, 'rolloCountContribs')
     .reverse()
     .slice(0, 100),
