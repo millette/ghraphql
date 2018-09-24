@@ -21,8 +21,12 @@
   "scripts": {
     "deps": "dependency-check . && dependency-check . --unused --no-dev",
     "lint": "standard",
-    "format": "prettier-standard '**/*.+(js|json|md|graphql)'",
-    "precommit": "lint-staged"
+    "format": "prettier-standard '**/*.+(js|json|md|graphql)'"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "dependencies": {
     "debug": "^4.0.1",
@@ -52,7 +56,7 @@
   },
   "devDependencies": {
     "dependency-check": "^3.2.1",
-    "husky": "^0.14.3",
+    "husky": "^1.0.0-rc.15",
     "lint-staged": "^7.3.0",
     "prettier-standard": "^8.0.1",
     "standard": "^12.0.1"
