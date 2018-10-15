@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "debug": "^4.1.0",
-    "delay": "^4.0.1",
+    "delay": "^4.1.0",
     "franc-min": "^4.0.0",
     "get-best-contrast-color": "^0.2.2",
     "got": "^9.2.2",
@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "dependency-check": "^3.2.1",
-    "husky": "^1.1.1",
+    "husky": "^1.1.2",
     "lint-staged": "^7.3.0",
     "prettier-standard": "^8.0.1",
     "standard": "^12.0.1"
