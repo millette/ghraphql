@@ -49,7 +49,7 @@
     "mkdirp": "^0.5.1",
     "normalize-email-or-url": "^0.1.0",
     "p-map": "^2.0.0",
-    "progress": "^2.0.0",
+    "progress": "^2.0.1",
     "rollodeqc-gh-user-streak": "^2.2.0",
     "stopwords": "^0.0.9",
     "weeknumber": "^1.1.0"
