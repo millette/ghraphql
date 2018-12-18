@@ -50,7 +50,7 @@
     "normalize-email-or-url": "^0.1.0",
     "p-map": "^2.0.0",
     "progress": "^2.0.3",
-    "rollodeqc-gh-user-streak": "^2.2.0",
+    "rollodeqc-gh-user-streak": "^2.2.1",
     "stopwords": "^0.0.9",
     "weeknumber": "^1.1.1"
   },
