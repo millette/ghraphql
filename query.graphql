@@ -35,7 +35,7 @@ query ElUsers($loc: String!, $lastRepos: Int!, $after: String) {
     url
   }
 
-  search(after: $after, first: 20, type: USER, query: $loc) {
+  search(after: $after, first: 10, type: USER, query: $loc) {
     userCount
     pageInfo {
       endCursor
