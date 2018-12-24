@@ -29,7 +29,7 @@
     }
   },
   "dependencies": {
-    "debug": "^4.1.0",
+    "debug": "^4.1.1",
     "delay": "^4.1.0",
     "franc-min": "^4.0.0",
     "get-best-contrast-color": "^0.2.2",
