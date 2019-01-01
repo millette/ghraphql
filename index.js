@@ -19,7 +19,7 @@ const bestContrast = require('get-best-contrast-color').default
 
 const GOT_OPTS = {
   retry: {
-    retries: 6,
+    retries: 10,
     methods: ['POST'],
     statusCodes: [403, 408, 413, 429, 502, 503, 504]
   },
