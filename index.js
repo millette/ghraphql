@@ -111,7 +111,7 @@ const graphqlGotImp = async (where, query, variables = {}) => {
     */
 
     if (!variables.lastRepos) {
-      variables.lastRepos = 50
+      variables.lastRepos = 20
     }
 
     if (!variables.after) {
