@@ -35,7 +35,7 @@ query ElUsers($loc: String!, $lastRepos: Int!, $after: String) {
     url
   }
 
-  search(after: $after, first: 10, type: USER, query: $loc) {
+  search(after: $after, first: 5, type: USER, query: $loc) {
     userCount
     pageInfo {
       endCursor
@@ -59,9 +59,36 @@ query ElUsers($loc: String!, $lastRepos: Int!, $after: String) {
           starredRepositories(last: 1, ownedByViewer: false) {
             totalCount
           }
+
+          repositories(
+            last: $lastRepos
+            orderBy: { direction: ASC, field: PUSHED_AT }
+          ) {
+            totalCount
+            edges {
+              node {
+                licenseInfo {
+                  spdxId
+                }
+                description
+                forkCount
+                stargazers {
+                  totalCount
+                }
+                watchers {
+                  totalCount
+                }
+                primaryLanguage {
+                  name
+                }
+                nameWithOwner
+              }
+            }
+          }
+
           repositoriesContributedTo(
             last: $lastRepos
-            includeUserRepositories: true
+            orderBy: { direction: ASC, field: PUSHED_AT }
           ) {
             totalCount
             edges {
