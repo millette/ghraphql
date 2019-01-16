@@ -1,8 +1,8 @@
 'use strict'
 
 // npm
-const groupBy = require('lodash.groupby')
-const sortBy = require('lodash.sortby')
+// const groupBy = require('lodash.groupby')
+// const sortBy = require('lodash.sortby')
 
 // self
 const data = require('./all-the-repos-top-100-v9.json')
