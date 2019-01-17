@@ -1,0 +1,37 @@
+query {
+  rateLimit {
+    cost
+    limit
+    nodeCount
+    remaining
+    resetAt
+  }
+
+  licenses {
+    conditions {
+      description
+      key
+      label
+    }
+    description
+    featured
+    hidden
+    implementation
+    key
+    limitations {
+      description
+      key
+      label
+    }
+    name
+    nickname
+    permissions {
+      description
+      key
+      label
+    }
+    pseudoLicense
+    spdxId
+    url
+  }
+}

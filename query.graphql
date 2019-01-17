@@ -7,34 +7,6 @@ query ElUsers($loc: String!, $lastRepos: Int!, $after: String) {
     resetAt
   }
 
-  licenses {
-    conditions {
-      description
-      key
-      label
-    }
-    description
-    featured
-    hidden
-    implementation
-    key
-    limitations {
-      description
-      key
-      label
-    }
-    name
-    nickname
-    permissions {
-      description
-      key
-      label
-    }
-    pseudoLicense
-    spdxId
-    url
-  }
-
   search(after: $after, first: 15, type: USER, query: $loc) {
     userCount
     pageInfo {
