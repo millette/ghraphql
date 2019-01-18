@@ -7,6 +7,7 @@ const { join } = require('path')
 // self
 const { name, version } = require('./package.json')
 const processor = require('./lib/processor')
+// const normalizePath = require('./lib/norm')
 
 // npm
 const got = require('got')
@@ -90,7 +91,7 @@ const gotRetry = (query, variables) =>
     return ret
   })
 
-const queryBug21 = readFileSync('query-bug21.graphql', 'utf-8')
+const queryBug21 = readFileSync(localFile('query-bug21.graphql'), 'utf-8')
 
 const workaroundBug21 = async variables => {
   debug('WORKAROUNDBUG21 - variables:', variables)
@@ -100,7 +101,6 @@ const workaroundBug21 = async variables => {
   )
   if (!errors) return data
   const err = new Error(`GraphQL (workaroundBug21): ${errors[0].message}`)
-  err.query = query
   err.errors = JSON.stringify(errors)
   err.headers = headers
   if (data) {
@@ -233,7 +233,7 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
 
 const graphqlGotLicenses = async () => {
   const { headers, body: { data, errors } } = await gotRetry(
-    readFileSync('licenses.graphql', 'utf-8')
+    readFileSync(localFile('licenses.graphql'), 'utf-8')
   )
 
   let err
