@@ -7,7 +7,7 @@ query ElUsers($loc: String!, $lastRepos: Int!, $after: String) {
     resetAt
   }
 
-  search(after: $after, first: 15, type: USER, query: $loc) {
+  search(after: $after, first: 10, type: USER, query: $loc) {
     userCount
     pageInfo {
       endCursor
@@ -28,7 +28,7 @@ query ElUsers($loc: String!, $lastRepos: Int!, $after: String) {
           createdAt
           isHireable
           websiteUrl
-          starredRepositories(last: 1, ownedByViewer: false) {
+          starredRepositories(last: 1) {
             totalCount
           }
 
