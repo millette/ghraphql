@@ -1,0 +1,87 @@
+query ElUsers($loc: String!, $lastRepos: Int!, $after: String) {
+  rateLimit {
+    cost
+    limit
+    nodeCount
+    remaining
+    resetAt
+  }
+
+  search(after: $after, first: 1, type: USER, query: $loc) {
+    userCount
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+    edges {
+      node {
+        ... on User {
+          name
+          login
+          databaseId
+          company
+          bio
+          email
+          location
+          createdAt
+          isHireable
+          websiteUrl
+          starredRepositories(last: 1) {
+            totalCount
+          }
+
+          repositories(last: 1, orderBy: { direction: ASC, field: PUSHED_AT }) {
+            totalCount
+            edges {
+              node {
+                licenseInfo {
+                  spdxId
+                }
+                description
+                forkCount
+                stargazers {
+                  totalCount
+                }
+                watchers {
+                  totalCount
+                }
+                primaryLanguage {
+                  name
+                }
+                nameWithOwner
+              }
+            }
+          }
+
+          repositoriesContributedTo(
+            last: $lastRepos
+            orderBy: { direction: ASC, field: PUSHED_AT }
+          ) {
+            totalCount
+            edges {
+              node {
+                licenseInfo {
+                  spdxId
+                }
+                description
+                forkCount
+                stargazers {
+                  totalCount
+                }
+                watchers {
+                  totalCount
+                }
+                primaryLanguage {
+                  name
+                }
+                nameWithOwner
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

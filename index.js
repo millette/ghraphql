@@ -90,6 +90,25 @@ const gotRetry = (query, variables) =>
     return ret
   })
 
+const queryBug21 = readFileSync('query-bug21.graphql', 'utf-8')
+
+const workaroundBug21 = async variables => {
+  debug('WORKAROUNDBUG21 - variables:', variables)
+  const { headers, body: { data, errors } } = await gotRetry(
+    queryBug21,
+    variables
+  )
+  if (!errors) return data
+  const err = new Error(`GraphQL (workaroundBug21): ${errors[0].message}`)
+  err.query = query
+  err.errors = JSON.stringify(errors)
+  err.headers = headers
+  if (data) {
+    err.data = JSON.stringify(data)
+  }
+  throw err
+}
+
 const graphqlGotImp = async (where, query, variables = {}) => {
   try {
     let created
@@ -111,7 +130,7 @@ const graphqlGotImp = async (where, query, variables = {}) => {
     */
 
     if (!variables.lastRepos) {
-      variables.lastRepos = 20
+      variables.lastRepos = 50
     }
 
     if (!variables.after) {
@@ -124,17 +143,30 @@ const graphqlGotImp = async (where, query, variables = {}) => {
 
     debug('variables:', variables)
 
-    const { headers, body: { data, errors } } = await gotRetry(query, variables)
+    let { headers, body: { data, errors } } = await gotRetry(query, variables)
     const fetchedAt = new Date(headers.date).toISOString()
 
     if (errors) {
-      const err = new Error(`GraphQL: ${errors[0].message}`)
-      err.errors = JSON.stringify(errors)
-      err.headers = headers
-      if (data) {
-        err.data = JSON.stringify(data)
+      let workAroundData
+      if (
+        !errors[0].message.indexOf(
+          'Something went wrong while executing your query.'
+        )
+      ) {
+        workAroundData = await workaroundBug21(variables)
       }
-      throw err
+      if (workAroundData) {
+        data = workAroundData
+      } else {
+        const err = new Error(`GraphQL: ${errors[0].message}`)
+        err.query = query
+        err.errors = JSON.stringify(errors)
+        err.headers = headers
+        if (data) {
+          err.data = JSON.stringify(data)
+        }
+        throw err
+      }
     }
     if (!data || !data.search) {
       throw new Error('No data or data.search found.')
@@ -197,6 +229,30 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
   if (ms) {
     await delay(ms)
   }
+}
+
+const graphqlGotLicenses = async () => {
+  const { headers, body: { data, errors } } = await gotRetry(
+    readFileSync('licenses.graphql', 'utf-8')
+  )
+
+  let err
+  if (errors) {
+    err = new Error('Error fetching licenses.')
+    err.headers = headers
+    err.errors = errors
+    err.data = data
+    throw err
+  }
+
+  if (!data || !data.licenses || !data.licenses.length) {
+    err = new Error('No data licenses found.')
+    err.headers = headers
+    err.data = data
+    throw err
+  }
+
+  return data.licenses
 }
 
 const graphqlGot = async (where, query, variables = {}, tick = false) => {
@@ -265,6 +321,7 @@ const graphqlGot = async (where, query, variables = {}, tick = false) => {
     }
 
     data.meta = { name, version }
+    data.licenses = await graphqlGotLicenses()
     return processor(data)
   } catch (e) {
     debug('FIXME (statusCode) ?', e.statusCode)
