@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "debug": "^4.1.1",
-    "delay": "^4.2.0",
+    "delay": "^4.3.0",
     "franc-min": "^4.1.0",
     "get-best-contrast-color": "0.2.2",
     "got": "^9.6.0",
