@@ -56,7 +56,7 @@
     "marked-terminal": "^3.2.0",
     "meow": "^5.0.0",
     "mkdirp": "^0.5.1",
-    "normalize-email-or-url": "^0.1.0",
+    "normalize-email-or-url": "^0.1.1",
     "p-map": "^2.1.0",
     "progress": "^2.0.3",
     "rollodeqc-gh-user-streak": "^3.0.0",
