@@ -4,19 +4,19 @@ Search GitHub for users by location.
 
 # TOC
 
-* [Thank you!](#thank-you)
-* [Requirements](#requirements)
-  * [GNU/Linux / Unix-like OS](#gnulinux--unix-like-os)
-  * [Node.js](#node-js)
-  * [GitHub account and token](#github-account-and-token)
-* [Install](#install)
-* [Usage](#usage)
-* [Options](#options)
-* [Examples](#examples)
-* [Features](#features)
-* [GraphQL](#graphql)
-* [See also](#see-also)
-* [License](#license)
+- [Thank you!](#thank-you)
+- [Requirements](#requirements)
+  - [GNU/Linux / Unix-like OS](#gnulinux--unix-like-os)
+  - [Node.js](#node-js)
+  - [GitHub account and token](#github-account-and-token)
+- [Install](#install)
+- [Usage](#usage)
+- [Options](#options)
+- [Examples](#examples)
+- [Features](#features)
+- [GraphQL](#graphql)
+- [See also](#see-also)
+- [License](#license)
 
 ## Thank you!
 
@@ -102,9 +102,9 @@ $ ghraphql --colors --pretty
 
 ## Features
 
-* Use your own GraphQL queries on GitHub
-* Automatically search for "montreal" too when given "montréal"
-* JSON output
+- Use your own GraphQL queries on GitHub
+- Automatically search for "montreal" too when given "montréal"
+- JSON output
 
 ## GraphQL
 

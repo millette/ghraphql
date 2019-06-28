@@ -95,10 +95,10 @@ const queryBug21 = localFile('query-bug21.graphql')
 
 const workaroundBug21 = async variables => {
   debug('WORKAROUNDBUG21 - variables:', variables)
-  const { headers, body: { data, errors } } = await gotRetry(
-    queryBug21,
-    variables
-  )
+  const {
+    headers,
+    body: { data, errors }
+  } = await gotRetry(queryBug21, variables)
   if (!errors) return data
   const err = new Error(`GraphQL (workaroundBug21): ${errors[0].message}`)
   err.errors = JSON.stringify(errors)
@@ -143,7 +143,10 @@ const graphqlGotImp = async (where, query, variables = {}) => {
 
     debug('variables:', variables)
 
-    let { headers, body: { data, errors } } = await gotRetry(query, variables)
+    let {
+      headers,
+      body: { data, errors }
+    } = await gotRetry(query, variables)
     const fetchedAt = new Date(headers.date).toISOString()
 
     if (errors) {
@@ -175,13 +178,13 @@ const graphqlGotImp = async (where, query, variables = {}) => {
     data.search.edges =
       data.search && data.search.edges && data.search.edges.length
         ? data.search.edges.map(x => {
-          return {
-            node: {
-              ...x.node,
-              fetchedAt
+            return {
+              node: {
+                ...x.node,
+                fetchedAt
+              }
             }
-          }
-        })
+          })
         : []
 
     data._headers = headers
@@ -232,9 +235,10 @@ const throttle = async (then, userCount, nPerQuery, rateLimit) => {
 }
 
 const graphqlGotLicenses = async () => {
-  const { headers, body: { data, errors } } = await gotRetry(
-    localFile('licenses.graphql')
-  )
+  const {
+    headers,
+    body: { data, errors }
+  } = await gotRetry(localFile('licenses.graphql'))
 
   let err
   if (errors) {

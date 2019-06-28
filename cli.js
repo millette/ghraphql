@@ -53,7 +53,7 @@ const run = async cli => {
   // to measure average durations
   const makeApprox = bar =>
     bar.curr &&
-    Math.round((Date.now() - startTime) / 1000 * bar.total / bar.curr)
+    Math.round((((Date.now() - startTime) / 1000) * bar.total) / bar.curr)
 
   try {
     if (cli.flags.readme) {

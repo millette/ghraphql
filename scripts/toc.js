@@ -18,25 +18,27 @@ const makeAnchor = heading =>
 const readme = localFile('README.md')
 
 const tree = headings =>
-  headings.filter(h2 => h2.depth === 2).map(h2 => {
-    let last = h2.i + 1
-    const children = headings
-      .slice(last)
-      .filter(h3 => h3.depth === 3)
-      .filter(h3 => {
-        if (last === h3.i) {
-          ++last
-          return true
-        }
-        // If we skip an index, we can ignore the rest
-        last = headings.length
-        return false
-      })
-    if (children.length) {
-      return { ...h2, children }
-    }
-    return h2
-  })
+  headings
+    .filter(h2 => h2.depth === 2)
+    .map(h2 => {
+      let last = h2.i + 1
+      const children = headings
+        .slice(last)
+        .filter(h3 => h3.depth === 3)
+        .filter(h3 => {
+          if (last === h3.i) {
+            ++last
+            return true
+          }
+          // If we skip an index, we can ignore the rest
+          last = headings.length
+          return false
+        })
+      if (children.length) {
+        return { ...h2, children }
+      }
+      return h2
+    })
 
 // Output markdown list (and sublists)
 const markdownList = () => {
