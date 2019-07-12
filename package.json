@@ -41,7 +41,7 @@
     "debug": "^4.1.1",
     "delay": "^4.3.0",
     "franc-min": "^4.1.0",
-    "get-best-contrast-color": "0.2.2",
+    "get-best-contrast-color": "^0.3.0",
     "got": "^9.6.0",
     "lodash.countby": "^4.6.0",
     "lodash.deburr": "^4.1.0",
