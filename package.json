@@ -12,7 +12,7 @@
     "url": "http://robin.millette.info"
   },
   "engines": {
-    "node": ">= 8.11.4"
+    "node": ">= 10.16.0"
   },
   "keywords": [
     "github",
