@@ -21,21 +21,24 @@
     "location",
     "cli"
   ],
+  "scripts": {
+    "deps": "dependency-check . --no-dev"
+  },
   "lint-staged": {
-    "*.{js,json,md,graphql}": [
-      "prettier-standard",
+    "*.{html,js,json,md,mdx}": [
+      "prettier --write",
       "git add"
     ]
-  },
-  "scripts": {
-    "deps": "dependency-check . --no-dev",
-    "lint": "standard",
-    "format": "prettier-standard '**/*.+(js|json|md|graphql)'"
   },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "prettier": {
+    "semi": false,
+    "trailingComma": "es5",
+    "arrowParens": "always"
   },
   "dependencies": {
     "debug": "^4.1.1",
@@ -68,7 +71,6 @@
     "eslint": "^6.0.1",
     "husky": "^2.7.0",
     "lint-staged": "^9.2.0",
-    "prettier-standard": "^9.1.1",
-    "standard": "^13.0.2"
+    "prettier": "^1.18.2"
   }
 }
