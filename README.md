@@ -30,7 +30,7 @@ This might work on MacOS and Microsoft Windows but I haven't tested it. Let me k
 
 ### Node.js
 
-You'll need Node.js. The quickest way to install it for your local user in the [n-install bash script](https://github.com/mklement0/n-install).
+You'll need Node.js. The quickest way to install it for your local user is the [n-install bash script](https://github.com/mklement0/n-install).
 
 `git` and `curl` are required for `n-install`.
 
