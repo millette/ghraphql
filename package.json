@@ -26,8 +26,7 @@
   },
   "lint-staged": {
     "*.{html,js,json,md,mdx}": [
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ]
   },
   "husky": {
@@ -68,7 +67,7 @@
   },
   "devDependencies": {
     "dependency-check": "^4.1.0",
-    "husky": "2.7.0",
+    "husky": "^4.2.1",
     "lint-staged": "^10.0.7",
     "prettier": "^1.18.2"
   }
