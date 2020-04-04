@@ -57,7 +57,7 @@
     "marked": "^0.7.0",
     "marked-terminal": "^3.3.0",
     "meow": "^5.0.0",
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^0.5.5",
     "normalize-email-or-url": "^1.0.1",
     "p-map": "^3.0.0",
     "progress": "^2.0.3",
