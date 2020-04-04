@@ -68,7 +68,7 @@
   "devDependencies": {
     "dependency-check": "^4.1.0",
     "husky": "^4.2.3",
-    "lint-staged": "^10.0.8",
+    "lint-staged": "^10.1.1",
     "prettier": "^1.19.1"
   }
 }
